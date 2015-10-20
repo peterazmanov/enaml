@@ -53,7 +53,7 @@ Font_new( PyTypeObject* type, PyObject* args, PyObject* kwargs )
     FontCaps caps = MixedCase;
     static char* kwlist[] = { "family", "size", "weight", "style", "caps", 0 };
     if( !PyArg_ParseTupleAndKeywords(
-        args, kwargs, "S|iiii", kwlist, &family, &pointsize, &weight, &style, &caps ) )
+        args, kwargs, "U|iiii", kwlist, &family, &pointsize, &weight, &style, &caps ) )
         return 0;
     PyObjectPtr fontptr( PyType_GenericNew( type, args, kwargs ) );
     if( !fontptr )
@@ -74,7 +74,7 @@ Font_dealloc( Font* self )
 {
     Py_CLEAR( self->tkdata );
     Py_CLEAR( self->family );
-    self->ob_type->tp_free( reinterpret_cast<PyObject*>( self ) );
+    Py_TYPE(self)->tp_free( reinterpret_cast<PyObject*>( self ) );
 }
 
 
@@ -94,11 +94,11 @@ Font_repr( Font* self )
         "caps=Capitalize)"
     };
     std::ostringstream ostr;
-    ostr << "Font(family=\"" << PyString_AsString( self->family ) << "\", ";
+    ostr << "Font(family=\"" << PyUnicode_1BYTE_DATA( self->family ) << "\", ";
     ostr << "pointsize=" << self->pointsize << ", ";
     ostr << "weight=" << self->weight << ", ";
     ostr << style_reprs[self->style] << caps_reprs[self->caps];
-    return PyString_FromString(ostr.str().c_str());
+    return PyUnicode_FromString(ostr.str().c_str());
 };
 
 
@@ -113,28 +113,28 @@ Font_get_family( Font* self, void* context )
 static PyObject*
 Font_get_pointsize( Font* self, void* context )
 {
-    return PyInt_FromLong( self->pointsize );
+    return PyLong_FromLong( self->pointsize );
 }
 
 
 static PyObject*
 Font_get_weight( Font* self, void* context )
 {
-    return PyInt_FromLong( self->weight );
+    return PyLong_FromLong( self->weight );
 }
 
 
 static PyObject*
 Font_get_style( Font* self, void* context )
 {
-    return PyInt_FromLong( static_cast<long>( self->style ) );
+    return PyLong_FromLong( static_cast<long>( self->style ) );
 }
 
 
 static PyObject*
 Font_get_caps( Font* self, void* context )
 {
-    return PyInt_FromLong( static_cast<long>( self->caps ) );
+    return PyLong_FromLong( static_cast<long>( self->caps ) );
 }
 
 
@@ -181,8 +181,7 @@ Font_getset[] = {
 
 
 PyTypeObject Font_Type = {
-    PyObject_HEAD_INIT( 0 )
-    0,                                      /* ob_size */
+    PyVarObject_HEAD_INIT( &PyType_Type, 0 )
     "fontext.Font",                         /* tp_name */
     sizeof( Font ),                         /* tp_basicsize */
     0,                                      /* tp_itemsize */
@@ -190,7 +189,7 @@ PyTypeObject Font_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    (cmpfunc)0,                             /* tp_compare */
+    0,                                      /* tp_reserved */
     (reprfunc)Font_repr,                    /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)0,                  /* tp_as_sequence */
@@ -231,6 +230,17 @@ PyTypeObject Font_Type = {
 };
 
 
+struct module_state {
+    PyObject *error;
+};
+
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+#else
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+#endif
+
 static PyMethodDef
 fontext_methods[] = {
     { 0 } // Sentinel
@@ -240,7 +250,7 @@ fontext_methods[] = {
 static PyObject*
 new_enum_class( const char* name )
 {
-    PyObjectPtr pyname( PyString_FromString( name ) );
+    PyObjectPtr pyname( PyUnicode_FromString( name ) );
     if( !pyname )
         return 0;
     PyObjectPtr args( PyTuple_New( 0 ) );
@@ -249,7 +259,7 @@ new_enum_class( const char* name )
     PyDictPtr kwargs( PyDict_New() );
     if( !kwargs )
         return 0;
-    PyObjectPtr modname( PyString_FromString( "fontext" ) );
+    PyObjectPtr modname( PyUnicode_FromString( "fontext" ) );
     if( !modname )
         return 0;
     if( !kwargs.set_item( "__module__", modname ) )
@@ -269,33 +279,72 @@ new_enum_class( const char* name )
 static int
 add_enum( PyObject* cls, const char* name, long value )
 {
-    PyObjectPtr pyint( PyInt_FromLong( value ) );
+    PyObjectPtr pyint( PyLong_FromLong( value ) );
     if( !pyint )
         return -1;
     return PyObject_SetAttrString( cls, name, pyint.get() );
 }
 
 
+#if PY_MAJOR_VERSION >= 3
+
+static int fontext_traverse(PyObject *m, visitproc visit, void *arg) {
+    Py_VISIT(GETSTATE(m)->error);
+    return 0;
+}
+
+static int fontext_clear(PyObject *m) {
+    Py_CLEAR(GETSTATE(m)->error);
+    return 0;
+}
+
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "fontext",
+        NULL,
+        sizeof(struct module_state),
+        fontext_methods,
+        NULL,
+        fontext_traverse,
+        fontext_clear,
+        NULL
+};
+
+#define INITERROR return NULL
+
 PyMODINIT_FUNC
-initfontext( void )
+PyInit_fontext(void)
+
+#else
+#define INITERROR return
+
+PyMODINIT_FUNC
+initfontext(void)
+#endif
 {
     if( PyType_Ready( &Font_Type ) )
-        return;
+        INITERROR;
+
+#if PY_MAJOR_VERSION >= 3
+    PyObject *mod = PyModule_Create(&moduledef);
+#else
     PyObject* mod = Py_InitModule( "fontext", fontext_methods );
+#endif
     if( !mod )
-        return;
+        INITERROR;
     PyObject* PyFontStyle = new_enum_class( "FontStyle" );
     if( !PyFontStyle )
-        return;
+        INITERROR;
     PyObject* PyFontCaps = new_enum_class( "FontCaps" );
     if( !PyFontCaps )
-        return;
+        INITERROR;
 
-    #define AddEnum( cls, e ) \
-        do { \
-            if( add_enum( cls, #e, e ) < 0 ) \
-                return; \
-        } while( 0 )
+#define AddEnum( cls, e ) \
+    do { \
+        if( add_enum( cls, #e, e ) < 0 ) \
+            INITERROR; \
+    } while( 0 )
 
     AddEnum( PyFontStyle, Normal );
     AddEnum( PyFontStyle, Italic );
@@ -311,4 +360,8 @@ initfontext( void )
     PyModule_AddObject( mod, "Font", ( PyObject* )( &Font_Type ) );
     PyModule_AddObject( mod, "FontStyle", PyFontStyle );
     PyModule_AddObject( mod, "FontCaps", PyFontCaps );
+
+#if PY_MAJOR_VERSION >= 3
+    return mod;
+#endif
 }

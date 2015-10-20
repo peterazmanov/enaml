@@ -85,13 +85,13 @@ call_func( PyObject* mod, PyObject* args )
     }
 
     PyObject* result = PyEval_EvalCodeEx(
-        reinterpret_cast<PyCodeObject*>( PyFunction_GET_CODE( func ) ),
+        PyFunction_GET_CODE( func ),
         PyFunction_GET_GLOBALS( func ),
         func_locals,
         &PyTuple_GET_ITEM( func_args, 0 ),
         PyTuple_Size( func_args ),
         keywords, num_keywords, defaults, num_defaults,
-        PyFunction_GET_CLOSURE( func )
+        NULL, PyFunction_GET_CLOSURE( func )
     );
 
     if( keywords )
@@ -100,6 +100,16 @@ call_func( PyObject* mod, PyObject* args )
     return result;
  }
 
+struct module_state {
+    PyObject *error;
+};
+
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+#else
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+#endif
 
 static PyMethodDef
 funchelper_methods[] = {
@@ -109,10 +119,49 @@ funchelper_methods[] = {
 };
 
 
+#if PY_MAJOR_VERSION >= 3
+
+static int funchelper_traverse(PyObject *m, visitproc visit, void *arg) {
+    Py_VISIT(GETSTATE(m)->error);
+    return 0;
+}
+
+static int funchelper_clear(PyObject *m) {
+    Py_CLEAR(GETSTATE(m)->error);
+    return 0;
+}
+
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "weakmethod",
+        NULL,
+        sizeof(struct module_state),
+        funchelper_methods,
+        NULL,
+        funchelper_traverse,
+        funchelper_clear,
+        NULL
+};
+
+#define INITERROR return NULL
+
 PyMODINIT_FUNC
-initfunchelper( void )
+PyInit_funchelper(void)
+
+#else
+#define INITERROR return
+
+PyMODINIT_FUNC
+initfunchelper(void)
+#endif
 {
+#if PY_MAJOR_VERSION >= 3
+    PyObject *mod = PyModule_Create(&moduledef);
+    return mod;
+#else
     PyObject* mod = Py_InitModule( "funchelper", funchelper_methods );
+#endif
 }
 
 } // extern "C"

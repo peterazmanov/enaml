@@ -39,8 +39,7 @@ typedef struct {
 
 static PyTypeObject
 WinEnum_Type = {
-    PyObject_HEAD_INIT( 0 )
-    0,                                      /* ob_size */
+    PyVarObject_HEAD_INIT( &PyType_Type, 0 )
     "winutil.WinEnum",                      /* tp_name */
     sizeof( WinEnum ),                      /* tp_basicsize */
     0,                                      /* tp_itemsize */
@@ -48,7 +47,7 @@ WinEnum_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    (cmpfunc)0,                             /* tp_compare */
+    0,                                      /* tp_reserved */
     (reprfunc)0,                            /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)0,                  /* tp_as_sequence */
@@ -115,7 +114,7 @@ PyString_FromHICON( HICON icon, int& width_out, int& height_out )
     HGDIOBJ old_hdc = ( HBITMAP )SelectObject( hdc, win_bitmap );
     DrawIconEx( hdc, 0, 0, icon, w, h, 0, 0, DI_NORMAL );
 
-    PyObject* result = PyString_FromStringAndSize( ( const char* )bits, w * h * 4 );
+    PyObject* result = PyUnicode_FromStringAndSize( ( const char* )bits, w * h * 4 );
 
     // dispose resources created by GetIconInfo
     DeleteObject( icon_info.hbmMask );
@@ -149,6 +148,16 @@ load_icon( PyObject* mod, PyObject* args )
     return Py_BuildValue( "(O, (i, i))", result.get(), width, height );
 }
 
+struct module_state {
+    PyObject *error;
+};
+
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+#else
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+#endif
 
 static PyMethodDef
 winutil_methods[] = {
@@ -157,26 +166,62 @@ winutil_methods[] = {
     { 0 } // Sentinel
 };
 
-
 #define MAKE_ENUM( TOKEN, VALUE ) \
     do { \
         TOKEN = PyType_GenericNew( &WinEnum_Type, 0, 0 ); \
         if( !TOKEN ) \
-            return; \
+            INITERROR; \
         reinterpret_cast<WinEnum*>( TOKEN )->value = VALUE; \
         if( PyModule_AddObject( mod, #VALUE, newref( TOKEN ) ) < 0 ) \
-            return; \
+            INITERROR; \
     } while( 0 )
 
+#if PY_MAJOR_VERSION >= 3
+
+static int winutil_traverse(PyObject *m, visitproc visit, void *arg) {
+    Py_VISIT(GETSTATE(m)->error);
+    return 0;
+}
+
+static int winutil_clear(PyObject *m) {
+    Py_CLEAR(GETSTATE(m)->error);
+    return 0;
+}
+
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "winutil",
+        NULL,
+        sizeof(struct module_state),
+        winutil_methods,
+        NULL,
+        winutil_traverse,
+        winutil_clear,
+        NULL
+};
+
+#define INITERROR return NULL
 
 PyMODINIT_FUNC
-initwinutil( void )
+PyInit_winutil(void)
+
+#else
+#define INITERROR return
+
+PyMODINIT_FUNC
+initwinutil(void)
+#endif
 {
+#if PY_MAJOR_VERSION >= 3
+    PyObject *mod = PyModule_Create(&moduledef);
+#else
     PyObject* mod = Py_InitModule( "winutil", winutil_methods );
+#endif
     if( !mod )
-        return;
+        INITERROR;
     if( PyType_Ready( &WinEnum_Type ) )
-        return;
+        INITERROR;
     MAKE_ENUM( Py_OIC_SAMPLE, OIC_SAMPLE );
     MAKE_ENUM( Py_OIC_HAND, OIC_HAND );
     MAKE_ENUM( Py_OIC_QUES, OIC_QUES );
@@ -189,4 +234,8 @@ initwinutil( void )
     #if(WINVER >= 0x0600)
     MAKE_ENUM( Py_OIC_SHIELD, OIC_SHIELD );
     #endif
+
+#if PY_MAJOR_VERSION >= 3
+    return mod;
+#endif
 }

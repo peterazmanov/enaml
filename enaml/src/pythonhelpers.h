@@ -453,7 +453,7 @@ public:
 
     PyObjectPtr get_class() const
     {
-        return PyObjectPtr( PyMethod_GET_CLASS( m_pyobj ), true );
+        return PyObjectPtr( (PyObject *)Py_TYPE( PyMethod_GET_SELF( m_pyobj ) ) );
     }
 
 };
