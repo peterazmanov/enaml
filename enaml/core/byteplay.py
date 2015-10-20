@@ -35,7 +35,7 @@ import operator
 import itertools
 import sys
 import warnings
-from cStringIO import StringIO
+from io import StringIO
 
 ######################################################################
 # Define opcodes and information about them
@@ -58,13 +58,13 @@ class CodeList(list):
         return f.getvalue()
 
 opmap = dict((name.replace('+', '_'), Opcode(code))
-             for name, code in opcode.opmap.iteritems()
+             for name, code in opcode.opmap.items()
              if name != 'EXTENDED_ARG')
-opname = dict((code, name) for name, code in opmap.iteritems())
+opname = dict((code, name) for name, code in opmap.items())
 opcodes = set(opname)
 
 def globalize_opcodes():
-    for name, code in opmap.iteritems():
+    for name, code in opmap.items():
         globals()[name] = code
         __all__.append(name)
 globalize_opcodes()
@@ -178,11 +178,11 @@ def getse(op, arg=None):
         pass
 
     if arg is None:
-        raise ValueError, "Opcode stack behaviour depends on arg"
+        raise ValueError("Opcode stack behaviour depends on arg")
 
     def get_func_tup(arg, nextra):
         if arg > 0xFFFF:
-            raise ValueError, "Can only split a two-byte argument"
+            raise ValueError("Can only split a two-byte argument")
         return (nextra + 1 + (arg & 0xFF) + 2*((arg >> 8) & 0xFF),
                 1)
 
@@ -213,12 +213,12 @@ def getse(op, arg=None):
         return 1+arg, 1
     elif op == MAKE_CLOSURE:
         if python_version == '2.4':
-            raise ValueError, "The stack effect of MAKE_CLOSURE depends on TOS"
+            raise ValueError("The stack effect of MAKE_CLOSURE depends on TOS")
         else:
             return 2+arg, 1
     else:
-        raise ValueError, "The opcode %r isn't recognized or has a special "\
-              "flow control" % op
+        raise ValueError("The opcode %r isn't recognized or has a special "\
+              "flow control" % op)
 
 class SetLinenoType(object):
     def __repr__(self):
@@ -338,8 +338,7 @@ class Code(object):
             if op in hascode:
                 lastop, lastarg = code[-1]
                 if lastop != LOAD_CONST:
-                    raise ValueError, \
-                          "%s should be preceded by LOAD_CONST code" % op
+                    raise ValueError("%s should be preceded by LOAD_CONST code" % op)
                 code[-1] = (LOAD_CONST, Code.from_code(lastarg))
             if op not in hasarg:
                 code.append((op, None))
@@ -370,7 +369,7 @@ class Code(object):
         varkwargs = bool(co.co_flags & CO_VARKEYWORDS)
         newlocals = bool(co.co_flags & CO_NEWLOCALS)
         args = co.co_varnames[:co.co_argcount + varargs + varkwargs]
-        if co.co_consts and isinstance(co.co_consts[0], basestring):
+        if co.co_consts and isinstance(co.co_consts[0], str):
             docstring = co.co_consts[0]
         else:
             docstring = None
@@ -403,7 +402,7 @@ class Code(object):
         # Compare code. This isn't trivial because labels should be matching,
         # not equal.
         labelmapping = {}
-        for (op1, arg1), (op2, arg2) in itertools.izip(self.code, other.code):
+        for (op1, arg1), (op2, arg2) in zip(self.code, other.code):
             if isinstance(op1, Label):
                 if labelmapping.setdefault(op1, op2) is not op2:
                     return False
@@ -489,14 +488,14 @@ class Code(object):
                     stacks[pos] = curstack
                 else:
                     if stacks[pos] != curstack:
-                        raise ValueError, "Inconsistent code"
+                        raise ValueError("Inconsistent code")
                     return
 
             def newstack(n):
                 # Return a new stack, modified by adding n elements to the last
                 # block
                 if curstack[-1] + n < 0:
-                    raise ValueError, "Popped a non-existing element"
+                    raise ValueError("Popped a non-existing element")
                 return curstack[:-1] + (curstack[-1]+n,)
 
             if not isopcode(op):
@@ -513,21 +512,18 @@ class Code(object):
                 # In Python 2.4, it depends on the number of freevars of TOS,
                 # which should be a code object.
                 if pos == 0:
-                    raise ValueError, \
-                          "MAKE_CLOSURE can't be the first opcode"
+                    raise ValueError("MAKE_CLOSURE can't be the first opcode")
                 lastop, lastarg = code[pos-1]
                 if lastop != LOAD_CONST:
-                    raise ValueError, \
-                          "MAKE_CLOSURE should come after a LOAD_CONST op"
+                    raise ValueError("MAKE_CLOSURE should come after a LOAD_CONST op")
                 try:
                     nextrapops = len(lastarg.freevars)
                 except AttributeError:
                     try:
                         nextrapops = len(lastarg.co_freevars)
                     except AttributeError:
-                        raise ValueError, \
-                              "MAKE_CLOSURE preceding const should "\
-                              "be a code or a Code object"
+                        raise ValueError("MAKE_CLOSURE preceding const should "\
+                              "be a code or a Code object")
 
                 yield pos+1, newstack(-arg-nextrapops)
 
@@ -680,7 +676,7 @@ class Code(object):
                     seq.append(item)
                     return len(seq) - 1
                 else:
-                    raise IndexError, "Item not found"
+                    raise IndexError("Item not found")
 
         # List of tuples (pos, label) to be filled later
         jumps = []
@@ -720,7 +716,7 @@ class Code(object):
                         co_lnotab.append(incr_lineno)
 
             elif op == opcode.EXTENDED_ARG:
-                raise ValueError, "EXTENDED_ARG not supported in Code objects"
+                raise ValueError("EXTENDED_ARG not supported in Code objects")
 
             elif not op in hasarg:
                 co_code.append(op)
@@ -764,7 +760,7 @@ class Code(object):
             if co_code[pos] in hasjrel:
                 jump -= pos+3
             if jump > 0xFFFF:
-                raise NotImplementedError, "Extended jumps not implemented"
+                raise NotImplementedError("Extended jumps not implemented")
             co_code[pos+1] = jump & 0xFF
             co_code[pos+2] = (jump >> 8) & 0xFF
 
@@ -802,7 +798,7 @@ def printcodelist(codelist, to=sys.stdout):
     for i, (op, arg) in enumerate(codelist):
         if op is SetLineno:
             lineno = arg
-            print >> to
+            print(file=to)
             continue
 
         if isinstance(op, Label):
@@ -833,12 +829,12 @@ def printcodelist(codelist, to=sys.stdout):
         else:
             argstr = ''
 
-        print >> to, '%3s     %2s %4d %-20s %s' % (
+        print('%3s     %2s %4d %-20s %s' % (
             linenostr,
             islabelstr,
             i,
             op,
-            argstr)
+            argstr), file=to)
 
 def recompile(filename):
     """Create a .pyc by disassembling the file and assembling it again, printing
@@ -851,9 +847,9 @@ def recompile(filename):
 
     f = open(filename, 'U')
     try:
-        timestamp = long(os.fstat(f.fileno()).st_mtime)
+        timestamp = int(os.fstat(f.fileno()).st_mtime)
     except AttributeError:
-        timestamp = long(os.stat(filename).st_mtime)
+        timestamp = int(os.stat(filename).st_mtime)
     codestring = f.read()
     f.close()
     if codestring and codestring[-1] != '\n':
@@ -861,7 +857,7 @@ def recompile(filename):
     try:
         codeobject = compile(codestring, filename, 'exec')
     except SyntaxError:
-        print >> sys.stderr, "Skipping %s - syntax error." % filename
+        print("Skipping %s - syntax error." % filename, file=sys.stderr)
         return
     cod = Code.from_code(codeobject)
     message = "reassembled %r imported.\n" % filename
@@ -893,7 +889,7 @@ def recompile_all(path):
             for name in files:
                 if name.endswith('.py'):
                     filename = os.path.abspath(os.path.join(root, name))
-                    print >> sys.stderr, filename
+                    print(filename, file=sys.stderr)
                     recompile(filename)
     else:
         filename = os.path.abspath(path)
@@ -902,7 +898,7 @@ def recompile_all(path):
 def main():
     import os
     if len(sys.argv) != 2 or not os.path.exists(sys.argv[1]):
-        print """\
+        print("""\
 Usage: %s dir
 
 Search recursively for *.py in the given directory, disassemble and assemble
@@ -916,7 +912,7 @@ Some FutureWarnings may be raised, but that's expected.
 
 Tip: before doing this, check to see which tests fail even without reassembling
 them...
-""" % sys.argv[0]
+""" % sys.argv[0])
         sys.exit(1)
     recompile_all(sys.argv[1])
 

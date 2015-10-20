@@ -33,7 +33,7 @@ class Person(Atom):
             s = templ.format(
                 first=self.first_name, last=self.last_name, age=self.age,
             )
-            print s
+            print(s)
 
 
 if __name__ == '__main__':

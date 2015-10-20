@@ -168,7 +168,7 @@ class EnamlCompiler(cmn.CompilerBase):
 
         # Protect against unicode filenames, which are incompatible
         # with code objects created via types.CodeType
-        if isinstance(filename, unicode):
+        if isinstance(filename, str):
             filename = filename.encode(sys.getfilesystemencoding())
 
         # Create the compiler and generate the code.

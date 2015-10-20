@@ -12,7 +12,7 @@ from enaml.workbench.api import PluginManifest
 from enaml.workbench.ui.api import Workspace
 
 
-print 'Imported Sample Workspace!'
+print('Imported Sample Workspace!')
 
 
 class SampleWorkspace(Workspace):

@@ -32,7 +32,7 @@ class SubscriptionObserver(object):
         self.ref = atomref(owner)
         self.name = name
 
-    def __nonzero__(self):
+    def __bool__(self):
         """ The notifier is valid when it has an internal owner.
 
         The atom observer mechanism will remove the observer when it
@@ -157,7 +157,7 @@ class StandardTracer(CodeTracer):
         nkwargs = (argspec >> 8) & 0xFF
         if (func is getattr and (nargs == 2 or nargs == 3) and nkwargs == 0):
             obj, attr = argtuple[0], argtuple[1]
-            if isinstance(obj, Atom) and isinstance(attr, basestring):
+            if isinstance(obj, Atom) and isinstance(attr, str):
                 self.trace_atom(obj, attr)
 
     def return_value(self, value):

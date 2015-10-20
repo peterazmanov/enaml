@@ -500,7 +500,7 @@ class EnamlLexer(object):
 
     def input(self, txt):
         self.lexer.input(txt)
-        self.next_token = self.make_token_stream().next
+        self.next_token = self.make_token_stream().__next__
 
         # State initialization
         self.paren_count = 0

@@ -346,7 +346,7 @@ class QNotebook(QTabWidget):
         # the state of the buttons when the flag is set to True.
         if closable:
             setVisible = self.setTabCloseButtonVisible
-            for index in xrange(self.count()):
+            for index in range(self.count()):
                 page = self.widget(index)
                 setVisible(index, page.isClosable(), refresh=False)
         self._refreshTabBar()
@@ -454,7 +454,7 @@ class QtNotebook(QtConstraintsWidget, ProxyNotebook):
             self.set_selected_tab(d.selected_tab)
         else:
             current = self.widget.currentWidget()
-            name = current.objectName() if current is not None else u''
+            name = current.objectName() if current is not None else ''
             self._guard |= CHANGE_GUARD
             try:
                 d.selected_tab = name
@@ -499,7 +499,7 @@ class QtNotebook(QtConstraintsWidget, ProxyNotebook):
             self._guard |= CHANGE_GUARD
             try:
                 page = self.widget.currentWidget()
-                name = page.objectName() if page is not None else u''
+                name = page.objectName() if page is not None else ''
                 self.declaration.selected_tab = name
             finally:
                 self._guard &= ~CHANGE_GUARD

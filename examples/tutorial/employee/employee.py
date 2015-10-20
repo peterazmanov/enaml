@@ -36,7 +36,7 @@ class Person(Atom):
             s = templ.format(
                 first=self.first_name, last=self.last_name, age=self.age,
             )
-            print s
+            print(s)
 
     @observe('dob')
     def update_age(self, change):
@@ -76,7 +76,7 @@ class Employee(Person):
     # This method will be called automatically by atom when the
     # employee's phone number changes
     def _phone_changed(self, val):
-        print 'received new phone number for %s: %s' % (self.first_name, val)
+        print('received new phone number for %s: %s' % (self.first_name, val))
 
 
 if __name__ == '__main__':

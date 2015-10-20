@@ -75,12 +75,11 @@ class abstractclassmethod(classmethod):
 #------------------------------------------------------------------------------
 # Abstract Enaml Importer
 #------------------------------------------------------------------------------
-class AbstractEnamlImporter(object):
+class AbstractEnamlImporter(object, metaclass=ABCMeta):
     """ An abstract base class which defines the api required to
     implement an Enaml importer.
 
     """
-    __metaclass__ = ABCMeta
 
     # Count the number of times an importer has been installed.
     # Only uninstall it when the count hits 0 again. This permits
@@ -140,7 +139,7 @@ class AbstractEnamlImporter(object):
         # that the import hooks are always installed when executing the
         # module code of an Enaml file.
         with imports():
-            exec code in mod.__dict__
+            exec(code, mod.__dict__)
         return mod
 
     #--------------------------------------------------------------------------

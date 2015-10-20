@@ -43,11 +43,11 @@ class PhoneNumberValidator(Validator):
             area = match.group(1)
             prefix = match.group(2)
             suffix = match.group(3)
-            return u'(%s) %s-%s' % (area, prefix, suffix)
+            return '(%s) %s-%s' % (area, prefix, suffix)
         match = self.all_digits.match(text)
         if match:
             area = text[:3]
             prefix = text[3:6]
             suffix = text[6:10]
-            return u'(%s) %s-%s' % (area, prefix, suffix)
+            return '(%s) %s-%s' % (area, prefix, suffix)
         return text

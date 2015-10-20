@@ -66,10 +66,10 @@ def d_func(func):
 
 
 #: The flag indicating that the Declarative object has been initialized.
-INITIALIZED_FLAG = flag_generator.next()
+INITIALIZED_FLAG = next(flag_generator)
 
 
-class Declarative(Object):
+class Declarative(Object, metaclass=DeclarativeMeta):
     """ The most base class of the Enaml declarative objects.
 
     This class provides the core functionality required of declarative
@@ -78,7 +78,6 @@ class Declarative(Object):
     visual representation; that functionality is added by subclasses.
 
     """
-    __metaclass__ = DeclarativeMeta
 
     #: Export the 'name' attribute as a declarative member.
     name = d_(Unicode())

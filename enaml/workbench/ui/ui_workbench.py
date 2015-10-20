@@ -8,7 +8,7 @@
 from enaml.workbench.workbench import Workbench
 
 
-UI_PLUGIN = u'enaml.workbench.ui'
+UI_PLUGIN = 'enaml.workbench.ui'
 
 
 class UIWorkbench(Workbench):

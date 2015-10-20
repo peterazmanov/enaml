@@ -29,7 +29,7 @@ def main():
     options, args = parser.parse_args()
 
     if len(args) == 0:
-        print 'No .enaml file specified'
+        print('No .enaml file specified')
         sys.exit()
     else:
         enaml_file = args[0]
@@ -55,7 +55,7 @@ def main():
     # Bung in the command line arguments.
     sys.argv = [enaml_file] + script_argv
     with imports():
-        exec code in ns
+        exec(code, ns)
 
     requested = options.component
     if requested in ns:
@@ -69,7 +69,7 @@ def main():
         ns['main']()
     else:
         msg = "Could not find component '%s'" % options.component
-        print msg
+        print(msg)
 
 
 if __name__ == '__main__':

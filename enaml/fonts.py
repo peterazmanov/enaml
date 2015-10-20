@@ -174,7 +174,7 @@ def coerce_font(font):
     """ The coercing function for the FontMember.
 
     """
-    if isinstance(font, basestring):
+    if isinstance(font, str):
         return parse_font(font)
 
 

@@ -15,7 +15,7 @@ Look for example enaml files with the line:
 Generate an rst file, then open the app and take a snapshot.
 
 """
-from __future__ import print_function
+
 import os
 os.environ['QT_API'] = 'pyqt'
 import shutil

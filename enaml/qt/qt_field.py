@@ -107,10 +107,10 @@ class QtField(QtControl, ProxyField):
         # A temporary hack until styles are implemented
         if not self._guard & ERROR_FLAG:
             self._guard |= ERROR_FLAG
-            s = u'QLineEdit { border: 2px solid red; background: rgb(255, 220, 220); }'
+            s = 'QLineEdit { border: 2px solid red; background: rgb(255, 220, 220); }'
             self.widget.setStyleSheet(s)
             v = self.declaration.validator
-            self.widget.setToolTip(v and v.message or u'')
+            self.widget.setToolTip(v and v.message or '')
 
     def _clear_error_state(self):
         """ Clear the error state of the widget.
@@ -119,8 +119,8 @@ class QtField(QtControl, ProxyField):
         # A temporary hack until styles are implemented
         if self._guard & ERROR_FLAG:
             self._guard &= ~ERROR_FLAG
-            self.widget.setStyleSheet(u'')
-            self.widget.setToolTip(u'')
+            self.widget.setStyleSheet('')
+            self.widget.setToolTip('')
 
     def _maybe_valid(self, text):
         """ Get whether the text is valid or can be valid.

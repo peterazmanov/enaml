@@ -346,7 +346,7 @@ def coerce_color(color):
     """ The coercing function for the ColorMember.
 
     """
-    if isinstance(color, basestring):
+    if isinstance(color, str):
         return parse_color(color)
 
 

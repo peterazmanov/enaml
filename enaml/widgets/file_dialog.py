@@ -76,7 +76,7 @@ class FileDialog(ToolkitObject):
 
     #: An event fired if the dialog is accepted. The payload will be
     #: the selected path.
-    accepted = d_(Event(unicode), writable=False)
+    accepted = d_(Event(str), writable=False)
 
     #: An event fired when the dialog is rejected. It has no payload.
     rejected = d_(Event(), writable=False)
@@ -117,7 +117,7 @@ class FileDialog(ToolkitObject):
         self.proxy.exec_()
         if self.result == 'accepted':
             return self.path
-        return u''
+        return ''
 
     #--------------------------------------------------------------------------
     # Utility Methods
@@ -142,7 +142,7 @@ class FileDialog(ToolkitObject):
         self.result = result
         if result == 'accepted':
             self.paths = paths
-            self.path = paths[0] if paths else u''
+            self.path = paths[0] if paths else ''
             self.selected_filter = selected_filter
             self.accepted(self.path)
         else:

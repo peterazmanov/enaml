@@ -33,5 +33,5 @@ def compile_source(source, item, filename='<test>'):
     ast = parse(source, filename)
     code = EnamlCompiler.compile(ast, filename)
     namespace = {}
-    exec code in namespace
+    exec(code, namespace)
     return namespace[item]

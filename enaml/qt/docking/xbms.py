@@ -42,10 +42,10 @@ class XBM(Atom):
         """
         assert len(data) == (width * height)
         bytes = []
-        for row in xrange(height):
+        for row in range(height):
             val = 0
             offset = row * width
-            for col in xrange(width):
+            for col in range(width):
                 d = col % 8
                 if col > 0 and d == 0:
                     bytes.append(chr(val))

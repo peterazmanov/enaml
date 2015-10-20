@@ -23,7 +23,7 @@ class StrengthMember(Value):
 
     def validate(self, owner, old, new):
         if new is not None:
-            if not isinstance(new, (float, int, long)):
+            if not isinstance(new, (float, int)):
                 if new not in ('weak', 'medium', 'strong', 'required'):
                     msg = "A strength must be a number or 'weak', 'medium' "
                     msg += "'strong', or 'required'. Got %r instead." % new

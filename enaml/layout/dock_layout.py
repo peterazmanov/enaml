@@ -176,7 +176,7 @@ class _SplitLayoutItem(object):
             return isinstance(instance, (ItemLayout, TabLayout, SplitLayout))
 
         def __call__(cls, item):
-            if isinstance(item, basestring):
+            if isinstance(item, str):
                 return ItemLayout(item)
             msg = "cannot coerce '%s' to a 'SplitLayout' item"
             raise TypeError(msg % type(item).__name__)
@@ -256,7 +256,7 @@ class _AreaLayoutItem(object):
             return isinstance(instance, allowed)
 
         def __call__(cls, item):
-            if isinstance(item, basestring):
+            if isinstance(item, str):
                 return ItemLayout(item)
             msg = "cannot coerce '%s' to an 'AreaLayout' item"
             raise TypeError(msg % type(item).__name__)
@@ -310,7 +310,7 @@ class _DockLayoutItem(object):
             return isinstance(instance, (ItemLayout, AreaLayout))
 
         def __call__(cls, item):
-            if isinstance(item, basestring):
+            if isinstance(item, str):
                 return ItemLayout(item)
             if isinstance(item, (SplitLayout, TabLayout)):
                 return AreaLayout(item)

@@ -365,7 +365,7 @@ def p_enamldef_impl1(p):
 
 def p_enamldef_impl2(p):
     ''' enamldef_impl : ENAMLDEF NAME LPAR NAME RPAR COLON enamldef_simple_item '''
-    body = filter(None, [p[7]])
+    body = [_f for _f in [p[7]] if _f]
     enamldef = enaml_ast.EnamlDef(
         typename=p[2], base=p[4], body=body, lineno=p.lineno(1)
     )
@@ -386,7 +386,7 @@ def p_enamldef_impl3(p):
 
 def p_enamldef_impl4(p):
     ''' enamldef_impl : ENAMLDEF NAME LPAR NAME RPAR COLON NAME COLON enamldef_simple_item '''
-    body = filter(None, [p[9]])
+    body = [_f for _f in [p[9]] if _f]
     enamldef = enaml_ast.EnamlDef(
         typename=p[2], base=p[4], identifier=p[7], body=body, lineno=p.lineno(1)
     )
@@ -397,14 +397,14 @@ def p_enamldef_impl4(p):
 def p_enamldef_suite1(p):
     ''' enamldef_suite : NEWLINE INDENT enamldef_suite_items DEDENT '''
     # Filter out any pass statements
-    items = filter(None, p[3])
+    items = [_f for _f in p[3] if _f]
     p[0] = ('', items)
 
 
 def p_enamldef_suite2(p):
     ''' enamldef_suite : NEWLINE INDENT STRING NEWLINE enamldef_suite_items DEDENT '''
     # Filter out any pass statements
-    items = filter(None, p[5])
+    items = [_f for _f in p[5] if _f]
     p[0] = (p[3], items)
 
 
@@ -633,7 +633,7 @@ def p_child_def1(p):
 
 def p_child_def2(p):
     ''' child_def : NAME COLON child_def_simple_item '''
-    body = filter(None, [p[3]])
+    body = [_f for _f in [p[3]] if _f]
     p[0] = enaml_ast.ChildDef(typename=p[1], body=body, lineno=p.lineno(1))
 
 
@@ -647,7 +647,7 @@ def p_child_def3(p):
 
 def p_child_def4(p):
     ''' child_def : NAME COLON NAME COLON child_def_simple_item  '''
-    body = filter(None, [p[5]])
+    body = [_f for _f in [p[5]] if _f]
     child_def = enaml_ast.ChildDef(
         typename=p[1], identifier=p[3], body=body, lineno=p.lineno(1)
     )
@@ -657,7 +657,7 @@ def p_child_def4(p):
 def p_child_def_suite(p):
     ''' child_def_suite : NEWLINE INDENT child_def_suite_items DEDENT '''
     # Filter out any pass statements
-    items = filter(None, p[3])
+    items = [_f for _f in p[3] if _f]
     p[0] = items
 
 
@@ -792,7 +792,7 @@ _DECL_FUNCDEF_DISALLOWED = {
 
 def _validate_decl_funcdef(funcdef, lexer):
     walker = ast.walk(funcdef)
-    walker.next()  # discard toplevel funcdef
+    next(walker)  # discard toplevel funcdef
     for item in walker:
         if type(item) in _DECL_FUNCDEF_DISALLOWED:
             msg = '%s not allowed in a declarative function block'
@@ -937,7 +937,7 @@ def p_template_impl2(p):
     node.lineno = p.lineno(1)
     node.name = p[2]
     node.parameters = p[3]
-    node.body = filter(None, [p[5]])
+    node.body = [_f for _f in [p[5]] if _f]
     _validate_template(node, p.lexer.lexer)
     p[0] = node
 
@@ -958,13 +958,13 @@ def p_template_impl3(p):
 def p_template_suite(p):
     ''' template_suite : NEWLINE INDENT template_suite_items DEDENT '''
     # Filter out any pass statements
-    p[0] = filter(None, p[3])
+    p[0] = [_f for _f in p[3] if _f]
 
 
 def p_template_doc_suite(p):
     ''' template_doc_suite : NEWLINE INDENT STRING NEWLINE template_suite_items DEDENT '''
     # Filter out any pass statements
-    p[0] = (p[3], filter(None, p[5]))
+    p[0] = (p[3], [_f for _f in p[5] if _f])
 
 
 def p_template_suite_items1(p):
@@ -1141,7 +1141,7 @@ def p_template_inst_impl1(p):
     node.lineno = p.lineno(1)
     node.name = p[1]
     node.arguments = p[2]
-    node.body = filter(None, [p[4]])
+    node.body = [_f for _f in [p[4]] if _f]
     _validate_template_inst(node, p.lexer.lexer)
     p[0] = node
 
@@ -1153,7 +1153,7 @@ def p_template_inst_impl2(p):
     node.name = p[1]
     node.arguments = p[2]
     node.identifiers = p[4]
-    node.body = filter(None, [p[6]])
+    node.body = [_f for _f in [p[6]] if _f]
     _validate_template_inst(node, p.lexer.lexer)
     p[0] = node
 
@@ -1164,7 +1164,7 @@ def p_template_inst_impl3(p):
     node.lineno = p.lineno(1)
     node.name = p[1]
     node.arguments = p[2]
-    node.body = filter(None, p[4])
+    node.body = [_f for _f in p[4] if _f]
     _validate_template_inst(node, p.lexer.lexer)
     p[0] = node
 
@@ -1176,7 +1176,7 @@ def p_template_inst_impl4(p):
     node.name = p[1]
     node.arguments = p[2]
     node.identifiers = p[4]
-    node.body = filter(None, p[6])
+    node.body = [_f for _f in p[6] if _f]
     _validate_template_inst(node, p.lexer.lexer)
     p[0] = node
 
@@ -1760,7 +1760,7 @@ def p_expr_stmt2(p):
 def p_expr_stmt3(p):
     ''' expr_stmt : testlist equal_list '''
     all_items = [p[1]] + p[2]
-    targets = map(ast_for_testlist, all_items)
+    targets = list(map(ast_for_testlist, all_items))
     value = targets.pop()
     for item in targets:
         if type(item) == ast.Yield:
@@ -2527,7 +2527,7 @@ def p_comparison1(p):
 def p_comparison2(p):
     ''' comparison : expr comparison_list '''
     left = p[1]
-    ops, comparators = zip(*p[2])
+    ops, comparators = list(zip(*p[2]))
     cmpr = ast.Compare(left=left, ops=list(ops), comparators=list(comparators))
     p[0] = cmpr
 
@@ -2912,7 +2912,7 @@ def p_atom7(p):
             node = SetComp(elt=info.elt, generators=info.generators)
     elif isinstance(info, CommaSeparatedList):
         if isinstance(info.values[0], tuple):
-            keys, values = zip(*info.values)
+            keys, values = list(zip(*info.values))
             node = ast.Dict(keys=list(keys), values=list(values))
         else:
             node = Set(elts=info.values)

@@ -17,7 +17,7 @@ def get_style_sheet(name):
     """ This is a deprecated function.
 
     """
-    return _style_sheets.get(name, u'')
+    return _style_sheets.get(name, '')
 
 
 def register_style_sheet(name, sheet):
@@ -30,7 +30,7 @@ def register_style_sheet(name, sheet):
     msg += "to style the Dock Area instead."
     warnings.warn(msg, FutureWarning, stacklevel=2)
 
-    assert isinstance(sheet, unicode), 'style sheet must a unicode string'
+    assert isinstance(sheet, str), 'style sheet must a unicode string'
     if name in _style_sheets:
         raise ValueError("'%s' style is already registered" % name)
     _style_sheets[name] = sheet

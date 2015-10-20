@@ -210,11 +210,11 @@ class GridHelper(BoxHelper):
         # Create the row and column variables and their default limits.
         row_vars = []
         col_vars = []
-        for idx in xrange(num_rows + 1):
+        for idx in range(num_rows + 1):
             var = kiwi.Variable('row%d' % idx)
             row_vars.append(var)
             cns.append(var >= 0)
-        for idx in xrange(num_cols + 1):
+        for idx in range(num_cols + 1):
             var = kiwi.Variable('col%d' % idx)
             col_vars.append(var)
             cns.append(var >= 0)
@@ -265,7 +265,7 @@ class GridHelper(BoxHelper):
             for cell in cells:
                 if cell.start_row == cell.end_row:
                     row_map[cell.start_row].append(cell.item)
-            for items in row_map.itervalues():
+            for items in row_map.values():
                 if len(items) > 1:
                     helper = SequenceHelper(anchor, anchor, (), 0)
                     helper.items = tuple(items)
@@ -279,7 +279,7 @@ class GridHelper(BoxHelper):
             for cell in cells:
                 if cell.start_column == cell.end_column:
                     col_map[cell.start_column].append(cell.item)
-            for items in col_map.itervalues():
+            for items in col_map.values():
                 if len(items) > 1:
                     helper = SequenceHelper(anchor, anchor, (), 0)
                     helper.items = tuple(items)

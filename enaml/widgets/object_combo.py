@@ -46,7 +46,7 @@ class ObjectCombo(Control):
 
     #: The callable to use to convert the items into unicode strings
     #: for display. The default is the builtin 'unicode'.
-    to_string = d_(Callable(unicode))
+    to_string = d_(Callable(str))
 
     #: The callable to use to convert the items into icons for
     #: display. The default is a lambda which returns None.

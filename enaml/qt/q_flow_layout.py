@@ -11,7 +11,7 @@ from .QtCore import Qt, QSize, QRect
 from .QtGui import QLayout, QWidgetItem
 
 
-class AbstractFlowWidget(object):
+class AbstractFlowWidget(object, metaclass=ABCMeta):
     """ An abstract base class which defines the interface for widgets
     which can be used in a QFlowLayout.
 
@@ -19,7 +19,6 @@ class AbstractFlowWidget(object):
     this class in order to use the QFlowLayout.
 
     """
-    __metaclass__ = ABCMeta
 
     @abstractmethod
     def layoutData(self):

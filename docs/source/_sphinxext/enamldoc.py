@@ -221,7 +221,7 @@ def parse(classified):
 # Docstring Processors
 #------------------------------------------------------------------------------
 def process_function(app, name, obj, options, lines):
-    classified = map(lex_line, lines)
+    classified = list(map(lex_line, lines))
     return parse(classified).render()
 
 

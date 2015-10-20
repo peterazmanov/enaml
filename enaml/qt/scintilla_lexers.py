@@ -107,5 +107,5 @@ LEXERS = {
 
 #: A static mapping of lexer class to theme language name.
 LEXERS_INV = {}
-for key, value in LEXERS.iteritems():
+for key, value in LEXERS.items():
     LEXERS_INV[value] = key

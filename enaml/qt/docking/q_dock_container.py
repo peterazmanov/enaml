@@ -92,7 +92,7 @@ def _closestDockBar(container):
 
     tie_breakers = (3, 0, 2, 1)
     borders = (QDockBar.North, QDockBar.East, QDockBar.South, QDockBar.West)
-    values = zip(edge_ranks, edge_weights, tie_breakers, borders)
+    values = list(zip(edge_ranks, edge_weights, tie_breakers, borders))
     return sorted(values)[0][3]
 
 
@@ -108,7 +108,7 @@ class QDockContainer(QDockFrame):
     topLevelChanged = Signal(bool)
 
     #: A signal emitted when the container is alerted.
-    alerted = Signal(unicode)
+    alerted = Signal(str)
 
     class FrameState(QDockFrame.FrameState):
         """ A private class for managing container drag state.
@@ -287,7 +287,7 @@ class QDockContainer(QDockFrame):
         item = self.dockItem()
         if item is not None:
             return item.title()
-        return u''
+        return ''
 
     def icon(self):
         """ Get the icon for the container.

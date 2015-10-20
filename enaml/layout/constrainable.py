@@ -12,7 +12,7 @@ from atom.api import Atom, Constant, DefaultValue, Enum
 import kiwisolver as kiwi
 
 
-class Constrainable(object):
+class Constrainable(object, metaclass=ABCMeta):
     """ An abstract base class for defining constrainable objects.
 
     Implementations must provide `top`, `bottom`, `left`, `right`,
@@ -24,7 +24,6 @@ class Constrainable(object):
     which are valid PolicyEnum values.
 
     """
-    __metaclass__ = ABCMeta
 
 
 class ContentsConstrainable(Constrainable):
