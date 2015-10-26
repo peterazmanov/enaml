@@ -44,8 +44,8 @@ class ObjectCombo(Control):
     #: the first item in the list of items, or None.
     selected = d_(Value())
 
-    #: The callable to use to convert the items into unicode strings
-    #: for display. The default is the builtin 'unicode'.
+    #: The callable to use to convert the items into strings
+    #: for display. The default is the builtin 'str'.
     to_string = d_(Callable(str))
 
     #: The callable to use to convert the items into icons for

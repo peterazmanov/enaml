@@ -47,7 +47,7 @@ template FormControl(Attr, MemberType):
     """
     Field:
         read_only = True
-        text << unicode(getattr(model, Attr))
+        text << str(getattr(model, Attr))
 
 
 template FormControl(Attr, MemberType: Int):

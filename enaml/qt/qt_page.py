@@ -183,7 +183,7 @@ class QPage(QFrame):
 
         Returns
         -------
-        result : unicode
+        result : str
             The title string for the page's tab.
 
         """
@@ -194,7 +194,7 @@ class QPage(QFrame):
 
         Parameters
         ----------
-        title : unicode
+        title : str
             The string to use for this page's tab title.
 
         """
@@ -233,7 +233,7 @@ class QPage(QFrame):
 
         Returns
         -------
-        result : unicode
+        result : str
             The tool tip string for the page's tab.
 
         """
@@ -247,7 +247,7 @@ class QPage(QFrame):
 
         Parameters
         ----------
-        title : unicode
+        title : str
             The string to use for this page's tab tool tip.
 
         """

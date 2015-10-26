@@ -16,7 +16,7 @@ from enaml.widgets.api import (
 
 
 enamldef Main(Window): window:
-    attr path : unicode = u""
+    attr path : str = ""
     title = 'File Chooser'
     Container:
         constraints = [

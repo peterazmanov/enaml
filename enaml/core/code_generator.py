@@ -22,6 +22,9 @@ class CodeGenerator(Atom):
     #: The arguments for the code.
     args = List()
 
+    #: Number of kwonly arguments
+    kwonlyargs = Int()
+
     #: Whether the code takes variadic args.
     varargs = Bool(False)
 
@@ -51,7 +54,7 @@ class CodeGenerator(Atom):
 
         """
         bp_code = bp.Code(
-            self.code_ops, self.freevars, self.args, self.varargs,
+            self.code_ops, self.freevars, self.args, self.kwonlyargs, self.varargs,
             self.varkwargs, self.newlocals, self.name, self.filename,
             self.firstlineno, self.docstring or None
         )
@@ -222,19 +225,19 @@ class CodeGenerator(Atom):
             (bp.STORE_SUBSCR, None),                    # TOS
         )
 
-    def build_class(self):
+    def load_build_class(self):
         """ Build a class from the top 3 stack items.
 
         """
-        self.code_ops.append(                           # TOS -> name -> bases -> dict
-            (bp.BUILD_CLASS, None),                     # TOS -> class
+        self.code_ops.append(                           # TOS
+            (bp.LOAD_BUILD_CLASS, None),                # TOS -> builtins.__build_class__
         )
 
     def make_function(self, n_defaults=0):
         """ Make a function from a code object on the TOS.
 
         """
-        self.code_ops.append(                           # TOS -> code -> defaults
+        self.code_ops.append(                           # TOS -> qual_name -> code -> defaults
             (bp.MAKE_FUNCTION, n_defaults),             # TOS -> func
         )
 

@@ -166,7 +166,7 @@ class QDockTabBar(QTabBar):
         index : int
             The index of the tab of interest.
 
-        level : unicode
+        level : str
             The alert level for which to snap the pixmaps.
 
         """

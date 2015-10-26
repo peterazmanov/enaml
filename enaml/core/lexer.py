@@ -595,12 +595,12 @@ class EnamlLexer(object):
             #  ""    - string_escape
             s = "".join(tok.value for tok in string_toks)
             quote_type = start_tok.value.lower()
-            if quote_type == "":
-                s = s.decode("string_escape")
-            elif quote_type == "u":
-                s = s.decode("unicode_escape")
+            if quote_type == "" or quote_type == "u":
+                s = s.encode('utf-8').decode('unicode_escape').encode('latin-1').decode('utf-8')
+                #s = s.decode("unicode_escape")
             elif quote_type == "ur":
-                s = s.decode("raw_unicode_escape")
+                s = s.encode('utf-8').decode('raw_unicode_escape').encode('latin-1').decode('utf-8')
+                #s = s.decode("raw_unicode_escape")
             elif quote_type == "r":
                 s = s
             else:

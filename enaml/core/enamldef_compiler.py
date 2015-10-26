@@ -255,6 +255,7 @@ class EnamlDefCompiler(cmn.CompilerBase):
 
         # Load and invoke the first pass code object.
         cg.load_const(first_code)
+        cg.load_const(None)
         cg.make_function()
         for arg in first_args:
             cg.load_fast(arg)
@@ -263,6 +264,7 @@ class EnamlDefCompiler(cmn.CompilerBase):
 
         # Load and invoke the second pass code object.
         cg.load_const(second_code)
+        cg.load_const(None)
         cg.make_function()
         for arg in second_args:
             cg.load_fast(arg)

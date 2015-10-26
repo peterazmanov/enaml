@@ -105,7 +105,7 @@ class DockItem(Widget):
 
         Parameters
         ----------
-        level : unicode
+        level : str
             The alert level token to apply to the dock item.
 
         on : int

@@ -56,7 +56,7 @@ class QDockItemEvent(QEvent):
         type : QEvent.Type
             The event type for the event.
 
-        name : unicode
+        name : str
             The object name of the dock item of interest.
 
         """
@@ -68,7 +68,7 @@ class QDockItemEvent(QEvent):
 
         Returns
         -------
-        result : unicode
+        result : str
             The object name of the dock item for the event.
 
         """

@@ -48,7 +48,7 @@ class CorePlugin(Plugin):
 
         Parameters
         ----------
-        command_id : unicode
+        command_id : str
             The unique identifier of the command to invoke.
 
         parameters : dict, optional

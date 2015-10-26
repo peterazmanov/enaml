@@ -168,8 +168,8 @@ class EnamlCompiler(cmn.CompilerBase):
 
         # Protect against unicode filenames, which are incompatible
         # with code objects created via types.CodeType
-        if isinstance(filename, str):
-            filename = filename.encode(sys.getfilesystemencoding())
+        #if isinstance(filename, str):
+        #    filename = filename.encode(sys.getfilesystemencoding())
 
         # Create the compiler and generate the code.
         compiler = cls(filename=filename)
@@ -214,6 +214,7 @@ class EnamlCompiler(cmn.CompilerBase):
         cg = self.code_generator
         code = EnamlDefCompiler.compile(node, cg.filename)
         cg.load_const(code)
+        cg.load_const(None)
         cg.make_function()
         cg.call_function()
         cg.store_global(node.typename)
@@ -249,6 +250,7 @@ class EnamlCompiler(cmn.CompilerBase):
             # Generate the template code and function
             code = TemplateCompiler.compile(node, cg.filename)
             cg.load_const(code)
+            cg.load_const(None)
             cg.make_function(len(node.parameters.keywords))
 
             # Load and call the helper which will build the template

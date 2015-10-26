@@ -48,8 +48,8 @@ class QTextLabel(QFrame):
 
         Returns
         -------
-        result : unicode
-            The unicode text string for the text label.
+        result : str
+            The text string for the text label.
 
         """
         return self._text
@@ -59,8 +59,8 @@ class QTextLabel(QFrame):
 
         Parameters
         ----------
-        text : unicode
-            The unicode string to use for the text label.
+        text : str
+            The string to use for the text label.
 
         """
         self._min_text_size = QSize()

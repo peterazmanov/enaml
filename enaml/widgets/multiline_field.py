@@ -5,7 +5,7 @@
 #
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
-from atom.api import Bool, Typed, ForwardTyped, Unicode, observe, set_default
+from atom.api import Bool, Typed, ForwardTyped, Str, observe, set_default
 
 from enaml.core.declarative import d_
 
@@ -39,8 +39,8 @@ class MultilineField(Control):
     """ A simple multiline editable text widget.
 
     """
-    #: The unicode text to display in the field.
-    text = d_(Unicode())
+    #: The str text to display in the field.
+    text = d_(Str())
 
     #: Whether or not the field is read only.
     read_only = d_(Bool(False))
@@ -87,8 +87,8 @@ class MultilineField(Control):
 
         Returns
         -------
-        result : unicode
-            The unicode text stored in the field.
+        result : str
+            The str text stored in the field.
 
         """
         if self.proxy_is_active:

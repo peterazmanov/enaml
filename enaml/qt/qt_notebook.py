@@ -430,7 +430,7 @@ class QtNotebook(QtConstraintsWidget, ProxyNotebook):
 
         Parameters
         ----------
-        name : unicode
+        name : str
             The object name for the page of interest.
 
         Returns

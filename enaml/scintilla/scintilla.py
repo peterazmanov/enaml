@@ -183,7 +183,7 @@ class Scintilla(Control):
 
         Returns
         -------
-        result : unicode
+        result : str
             The text in the current document.
 
         """
@@ -196,7 +196,7 @@ class Scintilla(Control):
 
         Parameters
         ----------
-        text : unicode
+        text : str
             The text to apply to the current document.
 
         """

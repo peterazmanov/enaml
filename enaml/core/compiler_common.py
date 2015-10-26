@@ -361,6 +361,7 @@ def safe_eval_ast(cg, node, name, lineno, local_names):
         call_args = expr_cg.rewrite_to_fast_locals(local_names)
         expr_code = expr_cg.to_code()
         cg.load_const(expr_code)
+        cg.load_const(None)
         cg.make_function()
         for arg in call_args:
             if arg in local_names:
@@ -405,14 +406,33 @@ def gen_child_def_node(cg, node, local_names):
     # Subclass the child class if needed
     store_types = (StorageExpr, AliasExpr, FuncDef)
     if any(isinstance(item, store_types) for item in node.body):
+        cg.load_build_class()
+        cg.rot_two()                            # builtins.__build_class_ -> base
+
+        ###
+        class_cg = CodeGenerator()
+        class_cg.filename = cg.filename
+        class_cg.name = node.typename
+        class_cg.firstlineno = node.lineno
+        class_cg.set_lineno(node.lineno)
+
+        class_cg.code_ops.append((bp.LOAD_NAME, '__name__'),)
+        class_cg.code_ops.append((bp.STORE_NAME, '__module__'),)
+        class_cg.load_const(node.typename) # ?
+        class_cg.code_ops.append((bp.STORE_NAME, '__qualname__'),)
+        class_cg.load_const(None)
+        class_cg.return_value()
+
+        class_code = class_cg.to_code()
+        cg.load_const(class_code)
+        cg.load_const(None)
+        cg.make_function()
+        ###
+
+        cg.rot_two()                            # builtins.__build_class_ -> class_func -> base
         cg.load_const(node.typename)
-        cg.rot_two()
-        cg.build_tuple(1)
-        cg.build_map()
-        cg.load_global('__name__')
-        cg.load_const('__module__')
-        cg.store_map()                          # name -> bases -> dict
-        cg.build_class()                        # class
+        cg.rot_two()                            # builtins.__build_class_ -> class_func -> class_name -> base
+        cg.call_function(3)                     # class
 
     # Build the declarative compiler node
     store_locals = should_store_locals(node)
@@ -664,7 +684,7 @@ def _insert_decl_function(cg, funcdef):
 
     # extract the inner code object which represents the actual
     # function code and update its flags and global loads
-    inner = outer_ops[-2][1]
+    inner = outer_ops[-3][1]
     inner.newlocals = False
     inner_ops = inner.code
     for idx, (op, op_arg) in enumerate(inner_ops):

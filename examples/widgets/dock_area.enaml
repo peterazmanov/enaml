@@ -43,7 +43,7 @@ class LineCollector(Atom):
     text = Unicode(HEADER)
 
     #: The data for the collector. This is a list of 2-tuples of
-    #: the form (unicode, DockItemEvent.Type).
+    #: the form (str, DockItemEvent.Type).
     data = ContainerList()
 
     def _observe_data(self, change):

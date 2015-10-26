@@ -52,7 +52,7 @@ class DeclarativeFunction(object):
 
     """
     # XXX move this class to C++
-    __slots__ = ('im_func', 'im_key')
+    __slots__ = ('__func__', 'im_key')
 
     def __init__(self, im_func, im_key):
         """ Initialize a DeclarativeFunction.
@@ -129,7 +129,7 @@ class BoundDeclarativeMethod(object):
 
     """
     # XXX move this class to C++
-    __slots__ = ('im_func', 'im_key', 'im_self', 'im_class')
+    __slots__ = ('__func__', 'im_key', '__self__')
 
     def __init__(self, im_func, im_key, im_self, im_class):
         """ Initialize a BoundDeclarativeMethod.

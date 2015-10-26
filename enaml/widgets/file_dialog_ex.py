@@ -89,7 +89,7 @@ class FileDialogEx(ToolkitDialog):
 
         Returns
         -------
-        result : unicode
+        result : str
             The user selected directory path. This will be an empty
             string if no directory was selected.
 
@@ -117,7 +117,7 @@ class FileDialogEx(ToolkitDialog):
 
         Returns
         -------
-        result : unicode
+        result : str
             The user selected file name. This will be an empty
             string if no file name was selected.
 
@@ -170,7 +170,7 @@ class FileDialogEx(ToolkitDialog):
 
         Returns
         -------
-        result : unicode
+        result : str
             The user selected file name. This will be an empty
             string if no file name was selected.
 

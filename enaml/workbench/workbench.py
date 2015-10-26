@@ -68,7 +68,7 @@ class Workbench(Atom):
 
         Parameters
         ----------
-        plugin_id : unicode
+        plugin_id : str
             The identifier of the plugin of interest.
 
         """
@@ -95,7 +95,7 @@ class Workbench(Atom):
 
         Parameters
         ----------
-        plugin_id : unicode
+        plugin_id : str
             The identifier of the plugin of interest.
 
         Returns
@@ -112,7 +112,7 @@ class Workbench(Atom):
 
         Parameters
         ----------
-        plugin_id : unicode
+        plugin_id : str
             The identifier of the plugin of interest.
 
         force_create : bool, optional
@@ -152,7 +152,7 @@ class Workbench(Atom):
 
         Parameters
         ----------
-        extension_point_id : unicode
+        extension_point_id : str
             The fully qualified id of the extension point of interest.
 
         Returns

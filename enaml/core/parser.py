@@ -1469,39 +1469,55 @@ def p_small_stmt1(p):
 
 def p_print_stmt1(p):
     ''' print_stmt : PRINT '''
-    prnt = ast.Print()
-    prnt.dest = None
-    prnt.values = []
-    prnt.nl = True
-    p[0] = prnt
+    call = ast.Call()
+    call.func = ast.Name(id='print', ctx=ast.Load())
+    call.args = []
+    call.keywords = []
+    call.stargs = None
+    call.kwargs = None
+    expr = ast.Expr(value=call)
+    expr.lineno = p.lineno(1)
+    ast.fix_missing_locations(expr)
+    p[0] = expr
 
 
 def p_print_stmt2(p):
     ''' print_stmt : PRINT test '''
-    prnt = ast.Print()
-    prnt.dest = None
-    prnt.values = [p[2]]
-    prnt.nl = True
-    p[0] = prnt
+    call = ast.Call()
+    call.func = ast.Name(id='print', ctx=ast.Load())
+    call.args = [p[2]]
+    call.keywords = []
+    call.stargs = None
+    call.kwargs = None
+    expr = ast.Expr(value=call)
+    expr.lineno = p.lineno(1)
+    ast.fix_missing_locations(expr)
+    p[0] = expr
 
 
 def p_print_stmt3(p):
     ''' print_stmt : PRINT print_list '''
-    prnt = ast.Print()
+    call = ast.Call()
+    call.func = ast.Name(id='print', ctx=ast.Load())
+
     all_values = p[2]
     good_values = [item for item in all_values if item is not None]
-    if all_values[-1] is None:
-        nl = False
-    else:
-        nl = True
-    prnt.dest = None
-    prnt.values = good_values
-    prnt.nl = nl
-    p[0] = prnt
+    call.args = good_values
+    if all_values[-1] is not None:
+        call.args.append(ast.Str('\n'))
+
+    call.keywords = []
+    call.stargs = None
+    call.kwargs = None
+    expr = ast.Expr(value=call)
+    expr.lineno = p.lineno(1)
+    ast.fix_missing_locations(expr)
+    p[0] = expr
 
 
 def p_print_stmt4(p):
     ''' print_stmt : PRINT RIGHTSHIFT test '''
+    raise NotImplementedError
     prnt = ast.Print()
     prnt.dest = p[3]
     prnt.values = []
@@ -1511,6 +1527,7 @@ def p_print_stmt4(p):
 
 def p_print_stmt5(p):
     ''' print_stmt : PRINT RIGHTSHIFT test COMMA test '''
+    raise NotImplementedError
     prnt = ast.Print()
     prnt.dest = p[3]
     prnt.values = [p[5]]
@@ -1520,6 +1537,7 @@ def p_print_stmt5(p):
 
 def p_print_stmt6(p):
     ''' print_stmt : PRINT RIGHTSHIFT test COMMA print_list '''
+    raise NotImplementedError
     prnt = ast.Print()
     all_values = p[5]
     good_values = [item for item in all_values if item is not None]
@@ -2088,8 +2106,7 @@ def p_with_stmt1(p):
     ''' with_stmt : WITH with_item COLON suite '''
     with_stmt = ast.With()
     ctxt, opt_vars = p[2]
-    with_stmt.context_expr = ctxt
-    with_stmt.optional_vars = opt_vars
+    with_stmt.items = [ast.withitem(context_expr = ctxt, optional_vars = opt_vars)]
     with_stmt.body = p[4]
     with_stmt.lineno = p.lineno(1)
     ast.fix_missing_locations(with_stmt)
@@ -2099,20 +2116,17 @@ def p_with_stmt1(p):
 def p_with_stmt2(p):
     ''' with_stmt : WITH with_item with_item_list COLON suite '''
     with_stmt = ast.With()
+
+    items = list()
     ctxt, opt_vars = p[2]
-    with_stmt.context_expr = ctxt
-    with_stmt.optional_vars = opt_vars
-    root = with_stmt
-    last = with_stmt
+    items.append(ast.withitem(context_expr = ctxt, optional_vars = opt_vars))
     for ctxt, opt_vars in p[3]:
-        with_stmt = ast.With()
-        with_stmt.context_expr = ctxt
-        with_stmt.optional_vars = opt_vars
-        last.body = [with_stmt]
-        last = with_stmt
-    last.body = p[5]
-    root.lineno = p.lineno(1)
-    ast.fix_missing_locations(root)
+        items.append(ast.withitem(context_expr = ctxt, optional_vars = opt_vars))
+
+    with_stmt.items = items
+    with_stmt.body = p[5]
+    with_stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(with_stmt)
     p[0] = root
 
 
@@ -2152,7 +2166,7 @@ def p_funcdef(p):
 
 def p_parameters1(p):
     ''' parameters : LPAR RPAR '''
-    p[0] = ast.arguments(args=[], defaults=[], vararg=None, kwarg=None)
+    p[0] = ast.arguments(args=[], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_parameters2(p):
@@ -3603,7 +3617,7 @@ def p_old_test2(p):
 
 def p_old_lambdef1(p):
     ''' old_lambdef : LAMBDA COLON old_test '''
-    args = ast.arguments(args=[], defaults=[], kwarg=None, vararg=None)
+    args = ast.arguments(args=[], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
     body = p[3]
     p[0] = ast.Lambda(args=args, body=body)
 
@@ -3617,7 +3631,7 @@ def p_old_lambdef2(p):
 
 def p_lambdef1(p):
     ''' lambdef : LAMBDA COLON test '''
-    args = ast.arguments(args=[], defaults=[], kwarg=None, vararg=None)
+    args = ast.arguments(args=[], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
     body = p[3]
     p[0] = ast.Lambda(args=args, body=body)
 
@@ -3633,35 +3647,35 @@ def p_varargslist1(p):
     ''' varargslist : fpdef COMMA STAR NAME '''
     # def f(a, *args): pass
     # def f((a, b), *args): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=p[4], kwarg=None)
+    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=p[4], kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist2(p):
     ''' varargslist : fpdef COMMA STAR NAME COMMA DOUBLESTAR NAME '''
     # def f(a, *args, **kwargs): pass
     # def f((a, b), *args, **kwargs): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=p[4], kwarg=p[7])
+    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=p[4], kwonlyargs=[], kw_defaults=[], kwarg=p[7])
 
 
 def p_varargslist3(p):
     ''' varargslist : fpdef COMMA DOUBLESTAR NAME '''
     # def f(a, **kwargs): pass
     # def f((a, b), **kwargs): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=None, kwarg=p[4])
+    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[4])
 
 
 def p_varargslist4(p):
     ''' varargslist : fpdef '''
     # def f(a): pass
     # def f((a, b)): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=None, kwarg=None)
+    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist5(p):
     ''' varargslist : fpdef COMMA '''
     # def f(a,): pass
     # def f((a,b),): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=None, kwarg=None)
+    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist6(p):
@@ -3670,7 +3684,7 @@ def p_varargslist6(p):
     # def f((a, b), c, d=4, *args): pass
     list_args, defaults = p[2]
     args = [p[1]] + list_args
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[5], kwarg=None)
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[5], kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist7(p):
@@ -3679,7 +3693,7 @@ def p_varargslist7(p):
     # def f((a, b), c, d=4, *args, **kwargs): pass
     list_args, defaults = p[2]
     args = [p[1]] + list_args
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[5], kwarg=p[8])
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[5], kwonlyargs=[], kw_defaults=[], kwarg=p[8])
 
 
 def p_varargslist8(p):
@@ -3688,7 +3702,7 @@ def p_varargslist8(p):
     # def f((a, b), c, d=4, **kwargs): pass
     list_args, defaults = p[2]
     args = [p[1]] + list_args
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwarg=p[5])
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[5])
 
 
 def p_varargslist9(p):
@@ -3697,7 +3711,7 @@ def p_varargslist9(p):
     # def f((a, b), c, d=4): pass
     list_args, defaults = p[2]
     args = [p[1]] + list_args
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwarg=None)
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist10(p):
@@ -3706,42 +3720,42 @@ def p_varargslist10(p):
     # def f((a, b), c, d=4,): pass
     list_args, defaults = p[2]
     args = [p[1]] + list_args
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwarg=None)
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist11(p):
     ''' varargslist : fpdef EQUAL test COMMA STAR NAME '''
     # def f(a=1, *args): pass
     # def f((a,b)=(1,2), *args): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=p[6], kwarg=None)
+    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=p[6], kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist12(p):
     ''' varargslist : fpdef EQUAL test COMMA STAR NAME COMMA DOUBLESTAR NAME '''
     # def f(a=1, *args, **kwargs): pass
     # def f((a,b)=(1,2), *args, **kwargs): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=p[6], kwarg=p[9])
+    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=p[6], kwonlyargs=[], kw_defaults=[], kwarg=p[9])
 
 
 def p_varargslist13(p):
     ''' varargslist : fpdef EQUAL test COMMA DOUBLESTAR NAME '''
     # def f(a=1, **kwargs): pass
     # def f((a,b)=(1,2), **kwargs): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=None, kwarg=p[6])
+    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[6])
 
 
 def p_varargslist14(p):
     ''' varargslist : fpdef EQUAL test '''
     # def f(a=1): pass
     # def f((a,b)=(1,2)): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=None, kwarg=None)
+    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist15(p):
     ''' varargslist : fpdef EQUAL test COMMA '''
     # def f(a=1,): pass
     # def f((a,b)=(1,2),): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=None, kwarg=None)
+    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist16(p):
@@ -3754,7 +3768,7 @@ def p_varargslist16(p):
         syntax_error(msg, tok)
     args = [p[1]] + list_args
     defaults = [p[3]] + list_defaults
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[7], kwarg=None)
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[7], kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist17(p):
@@ -3767,7 +3781,7 @@ def p_varargslist17(p):
         syntax_error(msg, tok)
     args = [p[1]] + list_args
     defaults = [p[3]] + list_defaults
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[7], kwarg=p[10])
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[7], kwonlyargs=[], kw_defaults=[], kwarg=p[10])
 
 
 def p_varargslist18(p):
@@ -3780,7 +3794,7 @@ def p_varargslist18(p):
         syntax_error(msg, tok)
     args = [p[1]] + list_args
     defaults = [p[3]] + list_defaults
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwarg=p[7])
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[7])
 
 
 def p_varargslist19(p):
@@ -3793,7 +3807,7 @@ def p_varargslist19(p):
         syntax_error(msg, tok)
     args = [p[1]] + list_args
     defaults = [p[3]] + list_defaults
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwarg=None)
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist20(p):
@@ -3806,25 +3820,25 @@ def p_varargslist20(p):
         syntax_error(msg, tok)
     args = [p[1]] + list_args
     defaults = [p[3]] + list_defaults
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwarg=None)
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist21(p):
     ''' varargslist : STAR NAME '''
     # def f(*args): pass
-    p[0] = ast.arguments(args=[], defaults=[], vararg=p[2], kwarg=None)
+    p[0] = ast.arguments(args=[], defaults=[], vararg=p[2], kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist22(p):
     ''' varargslist : STAR NAME COMMA DOUBLESTAR NAME '''
     # def f(*args, **kwargs): pass
-    p[0] = ast.arguments(args=[], defaults=[], vararg=p[2], kwarg=p[5])
+    p[0] = ast.arguments(args=[], defaults=[], vararg=p[2], kwonlyargs=[], kw_defaults=[], kwarg=p[5])
 
 
 def p_varargslist23(p):
     ''' varargslist : DOUBLESTAR NAME '''
     # def f(**kwargs): pass
-    p[0] = ast.arguments(args=[], defaults=[], vararg=None, kwarg=p[2])
+    p[0] = ast.arguments(args=[], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[2])
 
 
 # The varargslist_list handlers return a 2-tuple of (args, defaults) lists
@@ -3859,7 +3873,8 @@ def p_varargslist_list4(p):
 
 def p_fpdef1(p):
     ''' fpdef : NAME '''
-    p[0] = ast.Name(id=p[1], ctx=ast.Param(), lineno=p.lineno(1))
+    p[0] = ast.arg(arg=p[1], annotation=None)
+    #p[0] = ast.Name(id=p[1], ctx=ast.Param(), lineno=p.lineno(1))
 
 
 def p_fpdef2(p):

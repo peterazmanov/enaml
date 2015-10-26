@@ -40,8 +40,8 @@ class DialogButton(Atom):
 
         Parameters
         ----------
-        text : unicode
-            The unicode label for the button.
+        text : str
+            The str label for the button.
 
         action : 'accept' or 'reject'
             The dialog action to perform when the button is clicked.

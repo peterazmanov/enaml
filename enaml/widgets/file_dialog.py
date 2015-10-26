@@ -107,7 +107,7 @@ class FileDialog(ToolkitObject):
 
         Returns
         -------
-        result : unicode
+        result : str
             The path selected by the user, or an empty string if the
             dialog is cancelled.
 
@@ -134,7 +134,7 @@ class FileDialog(ToolkitObject):
             The list of user selected paths. If the result is 'rejected'
             this should be an empty list.
 
-        selected_filter : unicode
+        selected_filter : str
             The user selected name filter. If the result is 'rejected'
             this should be an empty string.
 

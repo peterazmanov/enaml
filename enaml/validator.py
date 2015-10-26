@@ -31,8 +31,8 @@ class Validator(Atom):
 
         Parameters
         ----------
-        text : unicode
-            The unicode text entered by the user.
+        text : str
+            The text entered by the user.
 
         Returns
         -------
@@ -52,7 +52,7 @@ class Validator(Atom):
 
         Returns
         -------
-        result : unicode
+        result : str
             The optionally modified input text.
 
         """
@@ -82,8 +82,8 @@ class IntValidator(Validator):
 
         Parameters
         ----------
-        text : unicode
-            The unicode text edited by the client widget.
+        text : str
+            The str text edited by the client widget.
 
         Returns
         -------
@@ -127,8 +127,8 @@ class FloatValidator(Validator):
 
         Parameters
         ----------
-        text : unicode
-            The unicode text edited by the client widget.
+        text : str
+            The str text edited by the client widget.
 
         Returns
         -------
@@ -167,8 +167,8 @@ class RegexValidator(Validator):
 
         Parameters
         ----------
-        text : unicode
-            The unicode text edited by the client widget.
+        text : str
+            The str text edited by the client widget.
 
         Returns
         -------

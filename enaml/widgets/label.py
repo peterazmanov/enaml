@@ -6,7 +6,7 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from atom.api import (
-    Typed, ForwardTyped, Unicode, Enum, Event, observe, set_default
+    Typed, ForwardTyped, Str, Enum, Event, observe, set_default
 )
 
 from enaml.core.declarative import d_
@@ -35,8 +35,8 @@ class Label(Control):
     """ A simple control for displaying read-only text.
 
     """
-    #: The unicode text for the label.
-    text = d_(Unicode())
+    #: The str text for the label.
+    text = d_(Str())
 
     #: The horizontal alignment of the text in the widget area.
     align = d_(Enum('left', 'right', 'center', 'justify'))

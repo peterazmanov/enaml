@@ -90,8 +90,8 @@ class IDockTitleBar(QWidget):
 
         Returns
         -------
-        result : unicode
-            The unicode title string for the title bar.
+        result : str
+            The str title string for the title bar.
 
         """
         raise NotImplementedError
@@ -101,8 +101,8 @@ class IDockTitleBar(QWidget):
 
         Parameters
         ----------
-        title : unicode
-            The unicode string to use for the title bar.
+        title : str
+            The str string to use for the title bar.
 
         """
         raise NotImplementedError
@@ -530,8 +530,8 @@ class QDockTitleBar(QFrame, IDockTitleBar):
 
         Returns
         -------
-        result : unicode
-            The unicode title string for the title bar.
+        result : str
+            The str title string for the title bar.
 
         """
         return self._title_label.text()
@@ -541,8 +541,8 @@ class QDockTitleBar(QFrame, IDockTitleBar):
 
         Parameters
         ----------
-        title : unicode
-            The unicode string to use for the title bar.
+        title : str
+            The str string to use for the title bar.
 
         """
         self._title_label.setText(title)

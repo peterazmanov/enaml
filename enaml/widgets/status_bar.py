@@ -68,7 +68,7 @@ class StatusBar(Widget):
 
         Parameters
         ----------
-        message : unicode
+        message : str
             The message to show in the status bar.
 
         timeout : int, optional

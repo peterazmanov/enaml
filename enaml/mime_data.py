@@ -35,7 +35,7 @@ class MimeData(Atom):
 
         Parameters
         ----------
-        mime_type : unicode
+        mime_type : str
             The mime type of interest.
 
         Returns
@@ -51,7 +51,7 @@ class MimeData(Atom):
 
         Parameters
         ----------
-        mime_type : unicode
+        mime_type : str
             The mime type of interest.
 
         """
@@ -62,7 +62,7 @@ class MimeData(Atom):
 
         Parameters
         ----------
-        mime_type : unicode
+        mime_type : str
             The mime type of interest.
 
         Returns
@@ -78,7 +78,7 @@ class MimeData(Atom):
 
         Parameters
         ----------
-        mime_type : unicode
+        mime_type : str
             The mime type of interest.
 
         data : str

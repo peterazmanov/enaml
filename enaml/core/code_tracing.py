@@ -7,7 +7,7 @@
 #------------------------------------------------------------------------------
 from .byteplay import (
     LOAD_ATTR, LOAD_CONST, ROT_TWO, DUP_TOP, CALL_FUNCTION, POP_TOP, LOAD_FAST,
-    BUILD_TUPLE, ROT_THREE, UNPACK_SEQUENCE, DUP_TOPX, BINARY_SUBSCR, GET_ITER,
+    BUILD_TUPLE, ROT_THREE, UNPACK_SEQUENCE, DUP_TOP_TWO, BINARY_SUBSCR, GET_ITER,
     LOAD_NAME, RETURN_VALUE
 )
 
@@ -283,7 +283,7 @@ def inject_tracing(codelist):
             n_stack_args = (op_arg & 0xFF) + 2 * ((op_arg >> 8) & 0xFF)
             code = [                                # func -> arg(0) -> arg(1) -> ... -> arg(n-1)
                 (BUILD_TUPLE, n_stack_args),        # func -> argtuple
-                (DUP_TOPX, 2),                      # func -> argtuple -> func -> argtuple
+                (DUP_TOP_TWO, None),                # func -> argtuple -> func -> argtuple
                 (LOAD_FAST, '_[tracer]'),           # func -> argtuple -> func -> argtuple -> tracer
                 (LOAD_ATTR, 'call_function'),       # func -> argtuple -> func -> argtuple -> tracefunc
                 (ROT_THREE, None),                  # func -> argtuple -> tracefunc -> func -> argtuple
@@ -297,7 +297,7 @@ def inject_tracing(codelist):
             inserts[idx] = code
         elif op == BINARY_SUBSCR:
             code = [                            # obj -> idx
-                (DUP_TOPX, 2),                  # obj -> idx -> obj -> idx
+                (DUP_TOP_TWO, None),            # obj -> idx -> obj -> idx
                 (LOAD_FAST, '_[tracer]'),       # obj -> idx -> obj -> idx -> tracer
                 (LOAD_ATTR, 'binary_subscr'),   # obj -> idx -> obj -> idx -> tracefunc
                 (ROT_THREE, None),              # obj -> idx -> tracefunc -> obj -> idx

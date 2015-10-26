@@ -389,8 +389,8 @@ class QDockItem(QFrame):
 
         Returns
         -------
-        result : unicode
-            The unicode title for the dock item.
+        result : str
+            The str title for the dock item.
 
         """
         return self.titleBarWidget().title()
@@ -400,8 +400,8 @@ class QDockItem(QFrame):
 
         Parameters
         ----------
-        title : unicode
-            The unicode title to use for the dock item.
+        title : str
+            The str title to use for the dock item.
 
         """
         self.titleBarWidget().setTitle(title)
@@ -694,7 +694,7 @@ class QDockItem(QFrame):
 
         Parameters
         ----------
-        level : unicode
+        level : str
             The alert level token to apply to the dock item.
 
         on : int
