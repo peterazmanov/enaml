@@ -10,7 +10,8 @@ from atom.api import Int, IntEnum, Typed
 from enaml.widgets.stack import ProxyStack
 
 from .QtCore import QTimer, QEvent, Signal
-from .QtGui import QStackedWidget, QPixmap
+from .QtGui import QPixmap
+from .QtWidgets import QStackedWidget
 
 from .q_pixmap_painter import QPixmapPainter
 from .q_pixmap_transition import (

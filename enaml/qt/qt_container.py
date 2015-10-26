@@ -15,7 +15,7 @@ from enaml.widgets.constraints_widget import ConstraintsWidget
 from enaml.widgets.container import ProxyContainer
 
 from .QtCore import QRect, QSize, QTimer, Signal
-from .QtGui import QFrame, QWidgetItem, QSizePolicy
+from .QtWidgets import QFrame, QWidgetItem, QSizePolicy
 
 from .qt_constraints_widget import QtConstraintsWidget
 from .qt_frame import QtFrame

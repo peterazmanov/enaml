@@ -17,7 +17,7 @@ except ImportError:
     from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT
 
 from .QtCore import Qt
-from .QtGui import QFrame, QVBoxLayout
+from .QtWidgets import QFrame, QVBoxLayout
 
 from .qt_control import QtControl
 

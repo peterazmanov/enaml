@@ -6,7 +6,7 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from .QtCore import QSize
-from .QtGui import QLayout, QWidgetItem
+from .QtWidgets import QLayout, QWidgetItem
 
 
 class QSingleWidgetItem(QWidgetItem):

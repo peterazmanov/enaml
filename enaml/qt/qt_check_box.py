@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.check_box import ProxyCheckBox
 
-from .QtGui import QCheckBox
+from .QtWidgets import QCheckBox
 
 from .qt_abstract_button import QtAbstractButton
 

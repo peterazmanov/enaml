@@ -12,7 +12,8 @@ from enaml.styling import StyleCache
 from enaml.widgets.widget import Feature, ProxyWidget
 
 from .QtCore import Qt, QSize, QPoint
-from .QtGui import QFont, QWidget, QWidgetAction, QApplication, QDrag, QPixmap
+from .QtWidgets import QWidget, QWidgetAction, QApplication
+from .QtGui import QFont, QDrag, QPixmap
 
 from . import focus_registry
 from .q_resource_helpers import (

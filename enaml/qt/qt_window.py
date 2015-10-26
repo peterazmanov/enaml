@@ -13,7 +13,8 @@ from enaml.layout.geometry import Pos, Rect, Size
 from enaml.widgets.window import ProxyWindow, CloseEvent
 
 from .QtCore import Qt, QPoint, QRect, QSize
-from .QtGui import QApplication, QIcon
+from .QtWidgets import QApplication
+from .QtGui import QIcon
 
 from .q_deferred_caller import deferredCall
 from .q_resource_helpers import get_cached_qicon

@@ -10,7 +10,7 @@ from atom.api import Int, Typed
 from enaml.widgets.object_combo import ProxyObjectCombo
 
 from .QtCore import QTimer
-from .QtGui import QComboBox
+from .QtWidgets import QComboBox
 
 from .q_resource_helpers import get_cached_qicon
 from .qt_control import QtControl

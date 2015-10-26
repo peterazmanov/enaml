@@ -11,10 +11,8 @@ from .QtCore import (
     Qt, QPoint, QPointF, QSize, QRect,QMargins, QPropertyAnimation, QTimer,
     QEvent, Signal
 )
-from .QtGui import (
-    QApplication, QWidget, QLayout, QPainter, QPainterPath, QRegion, QPen,
-    QCursor
-)
+from .QtGui import QPainter, QPainterPath, QRegion, QPen, QCursor, QTransform
+from .QtWidgets import QApplication, QWidget, QLayout
 
 from .q_single_widget_layout import QSingleWidgetLayout
 
@@ -994,7 +992,7 @@ class QPopupView(QWidget):
 
         # Store the path for painting and update the widget mask.
         state.path = path
-        mask = QRegion(path.toFillPolygon().toPolygon())
+        mask = QRegion(path.toFillPolygon(QTransform()).toPolygon())
         self.setMask(mask)
 
         # Set the geometry of the view and update. The update is needed

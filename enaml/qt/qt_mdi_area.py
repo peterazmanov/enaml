@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.mdi_area import ProxyMdiArea
 
-from .QtGui import QMdiArea
+from .QtWidgets import QMdiArea
 
 from .qt_constraints_widget import QtConstraintsWidget
 from .qt_mdi_window import QtMdiWindow

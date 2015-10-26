@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.action_group import ProxyActionGroup
 
-from .QtGui import QActionGroup
+from .QtWidgets import QActionGroup
 
 from .qt_action import QtAction
 from .qt_toolkit_object import QtToolkitObject

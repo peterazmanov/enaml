@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.radio_button import ProxyRadioButton
 
-from .QtGui import QRadioButton
+from .QtWidgets import QRadioButton
 
 from .qt_abstract_button import QtAbstractButton
 

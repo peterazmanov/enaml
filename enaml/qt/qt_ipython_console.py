@@ -12,7 +12,7 @@ from enaml.widgets.ipython_console import ProxyIPythonConsole
 from IPython.qt.console.rich_ipython_widget import RichIPythonWidget
 from IPython.qt.inprocess import QtInProcessKernelManager
 
-from .QtGui import QFrame, QVBoxLayout
+from .QtWidgets import QFrame, QVBoxLayout
 
 from . import focus_registry
 from .q_deferred_caller import deferredCall

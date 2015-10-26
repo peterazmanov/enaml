@@ -13,7 +13,7 @@ from atom.api import Int, IntEnum, Typed
 from enaml.widgets.notebook import ProxyNotebook
 
 from .QtCore import Qt, QEvent, QSize, Signal
-from .QtGui import (
+from .QtWidgets import (
     QTabWidget, QTabBar, QResizeEvent, QApplication, QStackedWidget
 )
 

@@ -10,7 +10,7 @@ from atom.api import Int, Typed
 from enaml.widgets.slider import ProxySlider
 
 from .QtCore import Qt
-from .QtGui import QSlider
+from .QtWidgets import QSlider
 
 from .qt_control import QtControl
 

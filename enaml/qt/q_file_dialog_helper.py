@@ -6,7 +6,7 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from . import QT_API
-from .QtGui import QFileDialog
+from .QtWidgets import QFileDialog
 
 
 # A mapping from the Enaml dialog modes to the name of the static method

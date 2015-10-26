@@ -11,7 +11,7 @@ from enaml.widgets.vtk_canvas import ProxyVTKCanvas
 
 from vtk.qt4.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-from .QtGui import QFrame, QVBoxLayout
+from .QtWidgets import QFrame, QVBoxLayout
 
 from .qt_control import QtControl
 
