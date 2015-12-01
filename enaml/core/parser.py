@@ -2176,7 +2176,7 @@ def p_parameters2(p):
 
 def p_classdef1(p):
     ''' classdef : CLASS NAME COLON suite '''
-    classdef = ast.ClassDef()
+    classdef = ast.ClassDef(keywords=[])
     classdef.name = p[2]
     classdef.bases = []
     classdef.body = p[4]
@@ -2188,7 +2188,7 @@ def p_classdef1(p):
 
 def p_classdef2(p):
     ''' classdef : CLASS NAME LPAR RPAR COLON suite '''
-    classdef = ast.ClassDef()
+    classdef = ast.ClassDef(keywords=[])
     classdef.name = p[2]
     classdef.bases = []
     classdef.body = p[6]
@@ -2200,7 +2200,7 @@ def p_classdef2(p):
 
 def p_classdef3(p):
     ''' classdef : CLASS NAME LPAR testlist RPAR COLON suite '''
-    classdef = ast.ClassDef()
+    classdef = ast.ClassDef(keywords=[])
     classdef.name = p[2]
     bases = p[4]
     if not isinstance(bases, list):
