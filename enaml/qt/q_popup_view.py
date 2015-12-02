@@ -102,10 +102,10 @@ class PopupState(Atom):
         """
         fade_in = self.fade_in_animator
         fade_in.setTargetObject(widget)
-        fade_in.setPropertyName('windowOpacity')
+        fade_in.setPropertyName(b'windowOpacity')
         fade_out = self.fade_out_animator
         fade_out.setTargetObject(widget)
-        fade_out.setPropertyName('windowOpacity')
+        fade_out.setPropertyName(b'windowOpacity')
         fade_out.finished.connect(widget.close)
         close_timer = self.close_timer
         close_timer.setSingleShot(True)
