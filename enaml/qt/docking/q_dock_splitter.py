@@ -6,7 +6,7 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from enaml.qt.QtCore import Qt
-from enaml.qt.QtGui import QSplitter, QSplitterHandle
+from enaml.qt.QtWidgets import QSplitter, QSplitterHandle
 
 from .q_dock_area import QDockArea
 

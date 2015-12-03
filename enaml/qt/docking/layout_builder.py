@@ -11,7 +11,7 @@ import warnings
 from enaml.nodevisitor import NodeVisitor
 
 from enaml.qt.QtCore import Qt, QRect
-from enaml.qt.QtGui import QApplication
+from enaml.qt.QtWidgets import QApplication
 
 from enaml.layout.dock_layout import ItemLayout, AreaLayout
 
