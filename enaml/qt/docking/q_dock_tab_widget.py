@@ -9,8 +9,11 @@ from weakref import ref
 
 from enaml.qt.QtCore import Qt, QPoint, QSize, QMetaObject, QEvent
 from enaml.qt.QtGui import (
-    QApplication, QTabBar, QTabWidget, QMouseEvent, QResizeEvent, QStyle,
-    QCursor, QStylePainter, QStyleOptionTabV3, QPixmap, QPainter
+    QMouseEvent, QResizeEvent, QCursor, QPixmap, QPainter
+)
+from enaml.qt.QtWidgets import (
+    QApplication, QTabBar, QTabWidget, QStyle,
+    QStylePainter, QStyleOptionTab,
 )
 
 from .event_types import QDockItemEvent, DockTabSelected
@@ -175,7 +178,7 @@ class QDockTabBar(QTabBar):
         repolish(self)
 
         # Setup the style option for the control
-        opt = QStyleOptionTabV3()
+        opt = QStyleOptionTab()
         self.initStyleOption(opt, index)
         opt.rect.moveTo(0, 0)
 
