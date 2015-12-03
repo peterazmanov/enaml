@@ -152,8 +152,8 @@ class QStack(QStackedWidget):
         size = self.size()
         src_widget.resize(size)
         dst_widget.resize(size)
-        src_pixmap = QPixmap.grabWidget(src_widget)
-        dst_pixmap = QPixmap.grabWidget(dst_widget)
+        src_pixmap = src_widget.grab()
+        dst_pixmap = dst_widget.grab()
         out_pixmap = QPixmap(size)
         transition.setPixmaps(src_pixmap, dst_pixmap, out_pixmap)
 
