@@ -13,7 +13,7 @@ and restored using a layout object which can be easily pickled.
 
 << autodoc-me >>
 """
-import cPickle
+import pickle
 
 from atom.api import Atom, ContainerList, Unicode
 
@@ -171,12 +171,12 @@ enamldef Main(Window):
             text = 'Save Layout'
             clicked ::
                 layout = area.save_layout()
-                parent.stored = cPickle.dumps(layout, -1)
+                parent.stored = pickle.dumps(layout, -1)
         PushButton: restore_b:
             text = 'Restore Layout'
             enabled << stored is not None
             clicked ::
-                layout = cPickle.loads(stored)
+                layout = pickle.loads(stored)
                 with area.suppress_dock_events():
                     area.apply_layout(layout)
         PushButton: add_b:
