@@ -15,7 +15,7 @@ that a relayout is necessary.
 
 << autodoc-me >>
 """
-from itertools import izip_longest
+from itertools import zip_longest
 
 from enaml.core.api import Include
 from enaml.layout.api import align, grid, factory
@@ -29,7 +29,7 @@ def generate_grid(container, num_cols):
     rows = []
     widgets = container.visible_widgets()
     row_iters = (iter(widgets),) * num_cols
-    rows = list(izip_longest(*row_iters))
+    rows = list(zip_longest(*row_iters))
     return [grid(*rows), align('width', *widgets)]
 
 
