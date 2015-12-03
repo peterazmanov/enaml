@@ -199,7 +199,7 @@ class SplitLayout(LayoutNode):
     items = List(Coerced(_SplitLayoutItem))
 
     def __init__(self, *items, **kwargs):
-        super(SplitLayout, self).__init__(items=list(items), **kwargs)
+        super().__init__(items=list(items), **kwargs)
 
     def children(self):
         """ Get the list of children of the split layout.
@@ -223,7 +223,7 @@ class VSplitLayout(SplitLayout):
     """
     def __init__(self, *items, **kwargs):
         kwargs['orientation'] = 'vertical'
-        super(VSplitLayout, self).__init__(*items, **kwargs)
+        super().__init__(*items, **kwargs)
 
 
 class DockBarLayout(LayoutNode):
