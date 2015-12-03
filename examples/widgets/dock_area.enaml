@@ -182,7 +182,7 @@ enamldef Main(Window):
         PushButton: add_b:
             text = 'Add Items'
             clicked ::
-                for _ in xrange(3):
+                for _ in range(3):
                     n = (len(area.children) + 1)
                     name = 'item_%d' % n
                     title = 'Item %d' % n

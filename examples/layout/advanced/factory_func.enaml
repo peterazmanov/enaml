@@ -54,4 +54,4 @@ enamldef Main(Window):
             # whenever the number of children of the container change.
             constraints << [factory(generate_grid, c_count.value)]
             Include:
-                objects << [Field(text=str(i)) for i in xrange(w_count.value)]
+                objects << [Field(text=str(i)) for i in range(w_count.value)]
