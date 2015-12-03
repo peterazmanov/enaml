@@ -11,20 +11,12 @@ from .QtWidgets import QFileDialog
 
 # A mapping from the Enaml dialog modes to the name of the static method
 # on QFileDialog which will launch the appropriate native dialog.
-if QT_API == 'pyqt':
-    _STATIC_METHOD_NAMES = {
-        'open_file': 'getOpenFileNameAndFilter',
-        'open_files': 'getOpenFileNamesAndFilter',
-        'save_file': 'getSaveFileNameAndFilter',
-        'directory': 'getExistingDirectory',
-    }
-else:
-    _STATIC_METHOD_NAMES = {
-        'open_file': 'getOpenFileName',
-        'open_files': 'getOpenFileNames',
-        'save_file': 'getSaveFileName',
-        'directory': 'getExistingDirectory',
-    }
+_STATIC_METHOD_NAMES = {
+    'open_file': 'getOpenFileName',
+    'open_files': 'getOpenFileNames',
+    'save_file': 'getSaveFileName',
+    'directory': 'getExistingDirectory',
+}
 
 
 def get_file_dialog_exec_func(mode):
