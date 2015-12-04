@@ -232,8 +232,8 @@ class GridHelper(BoxHelper):
             cns.extend(EqSpacer(size).create_constraints(first, second))
 
         # Setup the spacer lists for constraining the cell items
-        row_spacer = FlexSpacer(self.row_spacing / 2)  # floor division
-        col_spacer = FlexSpacer(self.column_spacing / 2)
+        row_spacer = FlexSpacer(self.row_spacing // 2)  # floor division
+        col_spacer = FlexSpacer(self.column_spacing // 2)
         rspace = [row_spacer] * len(row_vars)
         cspace = [col_spacer] * len(col_vars)
         rspace[0] = rspace[-1] = cspace[0] = cspace[-1] = 0
