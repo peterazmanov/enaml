@@ -60,17 +60,6 @@ template FormControl(Attr, MemberType: Int):
         value := getattr(model, Attr)
 
 
-template FormControl(Attr, MemberType: Str):
-    """ A form control template specialization for Str members.
-
-    This control uses a Field to represent the value.
-
-    """
-    Field:
-        text << getattr(model, Attr)
-        text :: setattr(model, Attr, str(text))
-
-
 template FormControl(Attr, MemberType: Unicode):
     """ A form control template specialization for Unicode members.
 
@@ -167,7 +156,7 @@ def form_spec(obtype):
 
     """
     items = []
-    for name, member in obtype.members().iteritems():
+    for name, member in obtype.members().items():
         if not name.startswith('_'):
             items.append((name, type(member)))
     items.sort()
