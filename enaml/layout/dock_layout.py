@@ -166,20 +166,22 @@ class TabLayout(LayoutNode):
         return self.items[:]
 
 
-class _SplitLayoutItem(object):
+class _SplitLayoutItemMeta(type):
+
+    def __instancecheck__(cls, instance):
+        return isinstance(instance, (ItemLayout, TabLayout, SplitLayout))
+
+    def __call__(cls, item):
+        if isinstance(item, str):
+            return ItemLayout(item)
+        msg = "cannot coerce '%s' to a 'SplitLayout' item"
+        raise TypeError(msg % type(item).__name__)
+
+
+class _SplitLayoutItem(metaclass=_SplitLayoutItemMeta):
     """ A private class which performs type checking for split layouts.
 
     """
-    class __metaclass__(type):
-
-        def __instancecheck__(cls, instance):
-            return isinstance(instance, (ItemLayout, TabLayout, SplitLayout))
-
-        def __call__(cls, item):
-            if isinstance(item, str):
-                return ItemLayout(item)
-            msg = "cannot coerce '%s' to a 'SplitLayout' item"
-            raise TypeError(msg % type(item).__name__)
 
 
 class SplitLayout(LayoutNode):
@@ -197,7 +199,7 @@ class SplitLayout(LayoutNode):
     items = List(Coerced(_SplitLayoutItem))
 
     def __init__(self, *items, **kwargs):
-        super(SplitLayout, self).__init__(items=list(items), **kwargs)
+        super().__init__(items=list(items), **kwargs)
 
     def children(self):
         """ Get the list of children of the split layout.
@@ -221,7 +223,7 @@ class VSplitLayout(SplitLayout):
     """
     def __init__(self, *items, **kwargs):
         kwargs['orientation'] = 'vertical'
-        super(VSplitLayout, self).__init__(*items, **kwargs)
+        super().__init__(*items, **kwargs)
 
 
 class DockBarLayout(LayoutNode):
@@ -244,23 +246,22 @@ class DockBarLayout(LayoutNode):
         """
         return self.items[:]
 
+class _AreaLayoutItemMeta(type):
+    def __instancecheck__(cls, instance):
+        allowed = (type(None), ItemLayout, TabLayout, SplitLayout)
+        return isinstance(instance, allowed)
 
-class _AreaLayoutItem(object):
+    def __call__(cls, item):
+        if isinstance(item, str):
+            return ItemLayout(item)
+        msg = "cannot coerce '%s' to an 'AreaLayout' item"
+        raise TypeError(msg % type(item).__name__)
+
+
+class _AreaLayoutItem(object, metaclass=_AreaLayoutItemMeta):
     """ A private class which performs type checking for area layouts.
 
     """
-    class __metaclass__(type):
-
-        def __instancecheck__(cls, instance):
-            allowed = (type(None), ItemLayout, TabLayout, SplitLayout)
-            return isinstance(instance, allowed)
-
-        def __call__(cls, item):
-            if isinstance(item, str):
-                return ItemLayout(item)
-            msg = "cannot coerce '%s' to an 'AreaLayout' item"
-            raise TypeError(msg % type(item).__name__)
-
 
 class AreaLayout(LayoutNode):
     """ A layout object for defining a dock area layout.
@@ -299,23 +300,23 @@ class AreaLayout(LayoutNode):
         base = [item] if item is not None else []
         return base + self.dock_bars
 
+class _DockLayoutItemMeta(type):
 
-class _DockLayoutItem(object):
+    def __instancecheck__(cls, instance):
+        return isinstance(instance, (ItemLayout, AreaLayout))
+
+    def __call__(cls, item):
+        if isinstance(item, str):
+            return ItemLayout(item)
+        if isinstance(item, (SplitLayout, TabLayout)):
+            return AreaLayout(item)
+        msg = "cannot coerce '%s' to a 'DockLayout' item"
+        raise TypeError(msg % type(item).__name__)
+
+class _DockLayoutItem(metaclass=_DockLayoutItemMeta):
     """ A private class which performs type checking for dock layouts.
 
     """
-    class __metaclass__(type):
-
-        def __instancecheck__(cls, instance):
-            return isinstance(instance, (ItemLayout, AreaLayout))
-
-        def __call__(cls, item):
-            if isinstance(item, str):
-                return ItemLayout(item)
-            if isinstance(item, (SplitLayout, TabLayout)):
-                return AreaLayout(item)
-            msg = "cannot coerce '%s' to a 'DockLayout' item"
-            raise TypeError(msg % type(item).__name__)
 
 
 class DockLayout(LayoutNode):
