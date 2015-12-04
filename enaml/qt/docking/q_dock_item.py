@@ -6,7 +6,7 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from enaml.qt.QtCore import Qt, QRect, QSize, QPoint, QTimer, Signal
-from enaml.qt.QtGui import QApplication, QFrame, QLayout
+from enaml.qt.QtWidgets import QApplication, QFrame, QLayout
 
 from .event_types import (
     QDockItemEvent, DockItemShown, DockItemHidden, DockItemClosed

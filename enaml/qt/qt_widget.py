@@ -173,7 +173,7 @@ class QtWidget(QtToolkitObject, ProxyWidget):
 
         """
         widget = self.focus_target()
-        if not widget.focusPolicy & Qt.TabFocus:
+        if not widget.focusPolicy() & Qt.TabFocus:
             return False
         if not widget.isEnabled():
             return False
@@ -344,7 +344,7 @@ class QtWidget(QtToolkitObject, ProxyWidget):
             qimg = get_cached_qimage(drag_data.image)
             qdrag.setPixmap(QPixmap.fromImage(qimg))
         else:
-            qdrag.setPixmap(QPixmap.grabWidget(widget))
+            qdrag.setPixmap(widget.grab())
         default = Qt.DropAction(drag_data.default_drop_action)
         supported = Qt.DropActions(drag_data.supported_actions)
         qresult = qdrag.exec_(supported, default)
