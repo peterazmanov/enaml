@@ -2952,6 +2952,21 @@ def p_atom10(p):
     p[0] = s
 
 
+def p_atom11(p):
+    ''' atom : NONE '''
+    p[0] = ast.NameConstant(None)
+
+
+def p_atom12(p):
+    ''' atom : FALSE '''
+    p[0] = ast.NameConstant(False)
+
+
+def p_atom13(p):
+    ''' atom : TRUE '''
+    p[0] = ast.NameConstant(True)
+
+
 def p_atom_string_list1(p):
     ''' atom_string_list : STRING '''
     p[0] = p[1]

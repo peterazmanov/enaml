@@ -218,6 +218,9 @@ class EnamlLexer(object):
         'while': 'WHILE',
         'with': 'WITH',
         'yield': 'YIELD',
+        'True': 'TRUE',
+        'False': 'FALSE',
+        'None': 'NONE',
     }
 
     tokens = (tokens +

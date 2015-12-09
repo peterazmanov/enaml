@@ -772,7 +772,7 @@ PyTypeObject DynamicScope_Type = {
     (getattrofunc)0,                        /* tp_getattro */
     (setattrofunc)0,                        /* tp_setattro */
     (PyBufferProcs*)0,                      /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_GC,  /* tp_flags */
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_GC|Py_TPFLAGS_DICT_SUBCLASS, /* tp_flags */
     0,                                      /* Documentation string */
     (traverseproc)DynamicScope_traverse,    /* tp_traverse */
     (inquiry)DynamicScope_clear,            /* tp_clear */

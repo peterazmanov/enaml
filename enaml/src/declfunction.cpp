@@ -145,8 +145,7 @@ DFunc_getset[] = {
 
 
 PyTypeObject DFunc_Type = {
-    PyObject_HEAD_INIT( &PyType_Type )
-    0,                                      /* ob_size */
+    PyVarObject_HEAD_INIT( &PyType_Type, 0 )
     "funchelper.DeclarativeFunction",       /* tp_name */
     sizeof( DFunc ),                        /* tp_basicsize */
     0,                                      /* tp_itemsize */
@@ -154,7 +153,7 @@ PyTypeObject DFunc_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    (cmpfunc)0,                             /* tp_compare */
+    0,                                      /* tp_reserved */
     (reprfunc)DFunc_repr,                   /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)0,                  /* tp_as_sequence */
