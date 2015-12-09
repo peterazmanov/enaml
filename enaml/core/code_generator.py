@@ -41,7 +41,7 @@ class CodeGenerator(Atom):
     filename = Str()
 
     #: The first line number for the code object.
-    firstlineno = Int()
+    firstlineno = Int(1)
 
     #: The docstring for the code object.
     docstring = Str()
