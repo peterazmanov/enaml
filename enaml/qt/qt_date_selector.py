@@ -34,7 +34,7 @@ class QtDateSelector(QtBoundedDate, ProxyDateSelector):
         """ Initialize the widget.
 
         """
-        super(QtDateSelector, self).init_widget()
+        super().init_widget()
         d = self.declaration
         self.set_date_format(d.date_format)
         self.set_calendar_popup(d.calendar_popup)
