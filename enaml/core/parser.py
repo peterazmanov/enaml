@@ -1994,6 +1994,8 @@ def p_try_stmt1(p):
     ''' try_stmt : TRY COLON suite FINALLY COLON suite '''
     try_finally = ast.Try()
     try_finally.body = p[3]
+    try_finally.handlers = []
+    try_finally.orelse = []
     try_finally.finalbody = p[6]
     try_finally.lineno = p.lineno(1)
     ast.fix_missing_locations(try_finally)
@@ -2006,6 +2008,7 @@ def p_try_stmt2(p):
     try_stmt.body = p[3]
     try_stmt.handlers = p[4]
     try_stmt.orelse = []
+    try_stmt.finalbody = []
     try_stmt.lineno = p.lineno(1)
     ast.fix_missing_locations(try_stmt)
     p[0] = try_stmt
@@ -2017,6 +2020,7 @@ def p_try_stmt3(p):
     try_stmt.body = p[3]
     try_stmt.handlers = p[4]
     try_stmt.orelse = p[7]
+    try_stmt.finalbody = []
     try_stmt.lineno = p.lineno(1)
     ast.fix_missing_locations(try_stmt)
     p[0] = try_stmt
