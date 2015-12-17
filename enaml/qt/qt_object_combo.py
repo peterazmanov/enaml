@@ -11,7 +11,6 @@ from enaml.widgets.object_combo import ProxyObjectCombo
 
 from .QtCore import QTimer
 from .QtWidgets import QComboBox
-from .QtGui import QPalette
 
 from .q_resource_helpers import get_cached_qicon
 from .qt_control import QtControl
