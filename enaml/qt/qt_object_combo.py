@@ -11,6 +11,7 @@ from enaml.widgets.object_combo import ProxyObjectCombo
 
 from .QtCore import QTimer
 from .QtWidgets import QComboBox
+from .QtGui import QPalette
 
 from .q_resource_helpers import get_cached_qicon
 from .qt_control import QtControl
@@ -36,7 +37,7 @@ class ComboRefreshTimer(QTimer):
             The object combo which owns the timer.
 
         """
-        super(ComboRefreshTimer, self).__init__()
+        super().__init__()
         self.setSingleShot(True)
         self.owner = owner
 
@@ -47,7 +48,7 @@ class ComboRefreshTimer(QTimer):
         and then release all references to itself and the owner.
 
         """
-        super(ComboRefreshTimer, self).timerEvent(event)
+        super().timerEvent(event)
         owner = self.owner
         if owner is not None:
             del owner.refresh_timer
@@ -91,7 +92,7 @@ class QtObjectCombo(QtControl, ProxyObjectCombo):
         """ Create and initialize the underlying widget.
 
         """
-        super(QtObjectCombo, self).init_widget()
+        super().init_widget()
         self.refresh_items()
         self.set_editable(self.declaration.editable)
         self.widget.currentIndexChanged.connect(self.on_index_changed)
@@ -101,7 +102,7 @@ class QtObjectCombo(QtControl, ProxyObjectCombo):
 
         """
         self.refresh_timer.stop()
-        super(QtObjectCombo, self).destroy()
+        super().destroy()
 
     #--------------------------------------------------------------------------
     # Signal Handlers
