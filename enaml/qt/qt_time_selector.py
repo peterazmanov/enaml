@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.time_selector import ProxyTimeSelector
 
-from .QtGui import QTimeEdit
+from .QtWidgets import QTimeEdit
 
 from .qt_bounded_time import QtBoundedTime, CHANGED_GUARD
 

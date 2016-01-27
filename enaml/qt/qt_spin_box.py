@@ -9,7 +9,7 @@ from atom.api import Int, Typed
 
 from enaml.widgets.spin_box import ProxySpinBox
 
-from .QtGui import QSpinBox
+from .QtWidgets import QSpinBox
 
 from .qt_control import QtControl
 

@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.date_selector import ProxyDateSelector
 
-from .QtGui import QDateEdit
+from .QtWidgets import QDateEdit
 
 from .qt_bounded_date import QtBoundedDate, CHANGED_GUARD
 

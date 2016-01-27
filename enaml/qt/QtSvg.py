@@ -9,6 +9,6 @@ from . import QT_API
 
 
 if QT_API == 'pyqt':
-    from PyQt4.QtSvg import *
+    from PyQt5.QtSvg import *
 else:
     from PySide.QtSvg import *

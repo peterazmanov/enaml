@@ -6,7 +6,8 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from enaml.qt.QtCore import QSize
-from enaml.qt.QtGui import QFrame, QIcon, QPainter
+from enaml.qt.QtGui import QIcon, QPainter
+from enaml.qt.QtWidgets import QFrame
 
 
 class QIconWidget(QFrame):

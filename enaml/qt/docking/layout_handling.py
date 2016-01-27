@@ -6,7 +6,7 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from enaml.qt.QtCore import Qt, QEvent
-from enaml.qt.QtGui import QApplication
+from enaml.qt.QtWidgets import QApplication
 
 from .event_types import DockAreaContentsChanged
 from .q_dock_bar import QDockBar

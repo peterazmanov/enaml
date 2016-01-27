@@ -9,7 +9,8 @@ from atom.api import Int, Typed
 
 from enaml.widgets.action import ProxyAction
 
-from .QtGui import QAction, QKeySequence, QIcon
+from .QtGui import QKeySequence, QIcon
+from .QtWidgets import QAction
 
 from .q_resource_helpers import get_cached_qicon
 from .qt_toolkit_object import QtToolkitObject

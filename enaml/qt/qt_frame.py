@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.frame import ProxyFrame
 
-from .QtGui import QFrame
+from .QtWidgets import QFrame
 
 from .qt_constraints_widget import QtConstraintsWidget
 

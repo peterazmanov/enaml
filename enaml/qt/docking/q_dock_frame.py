@@ -8,7 +8,7 @@
 from atom.api import Atom, Bool, Int, Typed
 
 from enaml.qt.QtCore import Qt, QEvent, QRect, QSize, QPoint, QMargins, Signal
-from enaml.qt.QtGui import QApplication, QFrame
+from enaml.qt.QtWidgets import QApplication, QFrame
 
 
 class QDockFrame(QFrame):

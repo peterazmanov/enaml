@@ -10,7 +10,7 @@ from atom.api import Typed
 from enaml.application import Application, ProxyResolver
 
 from .QtCore import QThread
-from .QtGui import QApplication
+from .QtWidgets import QApplication
 
 from .q_deferred_caller import deferredCall, timedCall
 from .qt_factories import QT_FACTORIES

@@ -10,7 +10,7 @@ from atom.api import Int, Typed
 from enaml.widgets.dock_pane import ProxyDockPane
 
 from .QtCore import Qt, Signal 
-from .QtGui import QDockWidget, QWidget
+from .QtWidgets import QDockWidget, QWidget
 
 from .qt_container import QtContainer
 from .qt_widget import QtWidget

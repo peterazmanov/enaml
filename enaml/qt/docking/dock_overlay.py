@@ -9,7 +9,8 @@ from atom.api import Atom, Bool, Int, Float, Typed
 
 from enaml.qt import QT_API
 from enaml.qt.QtCore import Qt, QPoint, QRect, QTimer, QPropertyAnimation
-from enaml.qt.QtGui import QWidget, QStyle, QStyleOption, QPainter
+from enaml.qt.QtWidgets import QWidget, QStyle, QStyleOption
+from enaml.qt.QtGui import QPainter
 
 from .q_guide_rose import QGuideRose
 from .q_dock_bar import QDockBar

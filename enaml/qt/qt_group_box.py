@@ -12,7 +12,7 @@ from atom.api import Typed
 from enaml.widgets.group_box import ProxyGroupBox
 
 from .QtCore import Qt, QSize, Signal
-from .QtGui import QGroupBox
+from .QtWidgets import QGroupBox
 
 from .qt_container import QtContainer
 

@@ -6,7 +6,7 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from .QtCore import QObject, QTimer, QEvent, QThread
-from .QtGui import QApplication
+from .QtWidgets import QApplication
 
 
 class DeferredCallEvent(QEvent):

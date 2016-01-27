@@ -10,7 +10,7 @@ from atom.api import Typed
 from enaml.widgets.separator import ProxySeparator
 
 from .QtCore import QSize
-from .QtGui import QFrame
+from .QtWidgets import QFrame
 
 from .qt_control import QtControl
 

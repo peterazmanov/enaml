@@ -20,7 +20,7 @@ from enaml.colors import parse_color
 from enaml.fonts import parse_font
 from enaml.scintilla.scintilla import ProxyScintilla
 
-from PyQt4 import Qsci
+from PyQt5 import Qsci
 
 from .QtGui import QColor, QFont
 

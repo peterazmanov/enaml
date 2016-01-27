@@ -9,6 +9,6 @@ from . import QT_API
 
 
 if QT_API == 'pyqt':
-    from PyQt4.QtOpenGL import *
+    from PyQt5.QtOpenGL import *
 else:
     from PySide.QtOpenGL import *

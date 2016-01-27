@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.calendar import ProxyCalendar
 
-from .QtGui import QCalendarWidget
+from .QtWidgets import QCalendarWidget
 
 from .qt_bounded_date import QtBoundedDate, CHANGED_GUARD
 

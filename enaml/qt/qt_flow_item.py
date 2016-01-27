@@ -10,7 +10,7 @@ from atom.api import Typed
 from enaml.widgets.flow_item import ProxyFlowItem
 
 from .QtCore import QSize, QEvent
-from .QtGui import QFrame, QLayout
+from .QtWidgets import QFrame, QLayout
 
 from .q_flow_layout import QFlowLayout, AbstractFlowWidget, FlowLayoutData
 from .q_single_widget_layout import QSingleWidgetLayout

@@ -7,7 +7,7 @@
 #------------------------------------------------------------------------------
 """ Generate the Example Documentation for the Enaml Examples
 
-Run as part of the documentation build script. Requires PyQt4.
+Run as part of the documentation build script. Requires PyQt5.
 Look for example enaml files with the line:
 
 << autodoc-me >>

@@ -3658,21 +3658,24 @@ def p_varargslist1(p):
     ''' varargslist : fpdef COMMA STAR NAME '''
     # def f(a, *args): pass
     # def f((a, b), *args): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=p[4], kwonlyargs=[], kw_defaults=[], kwarg=None)
+    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=ast.arg(arg=p[4], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist2(p):
     ''' varargslist : fpdef COMMA STAR NAME COMMA DOUBLESTAR NAME '''
     # def f(a, *args, **kwargs): pass
     # def f((a, b), *args, **kwargs): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=p[4], kwonlyargs=[], kw_defaults=[], kwarg=p[7])
+    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=ast.arg(arg=p[4], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=ast.arg(arg=p[7], annotation=None))
 
 
 def p_varargslist3(p):
     ''' varargslist : fpdef COMMA DOUBLESTAR NAME '''
     # def f(a, **kwargs): pass
     # def f((a, b), **kwargs): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[4])
+    p[0] = ast.arguments(args=[p[1]], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[],
+                         kwarg=ast.arg(arg=p[4], annotation=None))
 
 
 def p_varargslist4(p):
@@ -3695,7 +3698,8 @@ def p_varargslist6(p):
     # def f((a, b), c, d=4, *args): pass
     list_args, defaults = p[2]
     args = [p[1]] + list_args
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[5], kwonlyargs=[], kw_defaults=[], kwarg=None)
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=ast.arg(arg=p[5], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist7(p):
@@ -3704,7 +3708,8 @@ def p_varargslist7(p):
     # def f((a, b), c, d=4, *args, **kwargs): pass
     list_args, defaults = p[2]
     args = [p[1]] + list_args
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[5], kwonlyargs=[], kw_defaults=[], kwarg=p[8])
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=ast.arg(arg=p[5], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=ast.arg(arg=p[8], annotation=None))
 
 
 def p_varargslist8(p):
@@ -3713,7 +3718,8 @@ def p_varargslist8(p):
     # def f((a, b), c, d=4, **kwargs): pass
     list_args, defaults = p[2]
     args = [p[1]] + list_args
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[5])
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[],
+                         kwarg=ast.arg(arg=p[5], annotation=None))
 
 
 def p_varargslist9(p):
@@ -3738,21 +3744,24 @@ def p_varargslist11(p):
     ''' varargslist : fpdef EQUAL test COMMA STAR NAME '''
     # def f(a=1, *args): pass
     # def f((a,b)=(1,2), *args): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=p[6], kwonlyargs=[], kw_defaults=[], kwarg=None)
+    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=ast.arg(arg=p[6], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist12(p):
     ''' varargslist : fpdef EQUAL test COMMA STAR NAME COMMA DOUBLESTAR NAME '''
     # def f(a=1, *args, **kwargs): pass
     # def f((a,b)=(1,2), *args, **kwargs): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=p[6], kwonlyargs=[], kw_defaults=[], kwarg=p[9])
+    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=ast.arg(arg=p[6], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=ast.arg(arg=p[9], annotation=None))
 
 
 def p_varargslist13(p):
     ''' varargslist : fpdef EQUAL test COMMA DOUBLESTAR NAME '''
     # def f(a=1, **kwargs): pass
     # def f((a,b)=(1,2), **kwargs): pass
-    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[6])
+    p[0] = ast.arguments(args=[p[1]], defaults=[p[3]], vararg=None, kwonlyargs=[], kw_defaults=[],
+                         kwarg=ast.arg(arg=p[6], annotation=None))
 
 
 def p_varargslist14(p):
@@ -3779,7 +3788,8 @@ def p_varargslist16(p):
         syntax_error(msg, tok)
     args = [p[1]] + list_args
     defaults = [p[3]] + list_defaults
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[7], kwonlyargs=[], kw_defaults=[], kwarg=None)
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=ast.arg(arg=p[7], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist17(p):
@@ -3792,7 +3802,8 @@ def p_varargslist17(p):
         syntax_error(msg, tok)
     args = [p[1]] + list_args
     defaults = [p[3]] + list_defaults
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=p[7], kwonlyargs=[], kw_defaults=[], kwarg=p[10])
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=ast.arg(arg=p[7], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=ast.arg(arg=p[10], annotation=None))
 
 
 def p_varargslist18(p):
@@ -3805,7 +3816,8 @@ def p_varargslist18(p):
         syntax_error(msg, tok)
     args = [p[1]] + list_args
     defaults = [p[3]] + list_defaults
-    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[7])
+    p[0] = ast.arguments(args=args, defaults=defaults, vararg=None, kwonlyargs=[], kw_defaults=[],
+                         kwarg=ast.arg(arg=p[7], annotation=None))
 
 
 def p_varargslist19(p):
@@ -3837,19 +3849,22 @@ def p_varargslist20(p):
 def p_varargslist21(p):
     ''' varargslist : STAR NAME '''
     # def f(*args): pass
-    p[0] = ast.arguments(args=[], defaults=[], vararg=p[2], kwonlyargs=[], kw_defaults=[], kwarg=None)
+    p[0] = ast.arguments(args=[], defaults=[], vararg=ast.arg(arg=p[2], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=None)
 
 
 def p_varargslist22(p):
     ''' varargslist : STAR NAME COMMA DOUBLESTAR NAME '''
     # def f(*args, **kwargs): pass
-    p[0] = ast.arguments(args=[], defaults=[], vararg=p[2], kwonlyargs=[], kw_defaults=[], kwarg=p[5])
+    p[0] = ast.arguments(args=[], defaults=[], vararg=ast.arg(arg=p[2], annotation=None),
+                         kwonlyargs=[], kw_defaults=[], kwarg=ast.arg(arg=p[5], annotation=None))
 
 
 def p_varargslist23(p):
     ''' varargslist : DOUBLESTAR NAME '''
     # def f(**kwargs): pass
-    p[0] = ast.arguments(args=[], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[], kwarg=p[2])
+    p[0] = ast.arguments(args=[], defaults=[], vararg=None, kwonlyargs=[], kw_defaults=[],
+                         kwarg=ast.arg(arg=p[2], annotation=None))
 
 
 # The varargslist_list handlers return a 2-tuple of (args, defaults) lists

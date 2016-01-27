@@ -13,8 +13,9 @@ from atom.api import Int, IntEnum, Typed
 from enaml.widgets.notebook import ProxyNotebook
 
 from .QtCore import Qt, QEvent, QSize, Signal
-from .QtGui import (
-    QTabWidget, QTabBar, QResizeEvent, QApplication, QStackedWidget
+from .QtGui import QResizeEvent
+from .QtWidgets import (
+    QTabWidget, QTabBar, QApplication, QStackedWidget
 )
 
 from .qt_constraints_widget import QtConstraintsWidget

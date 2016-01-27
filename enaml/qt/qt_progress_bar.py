@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.progress_bar import ProxyProgressBar
 
-from .QtGui import QProgressBar
+from .QtWidgets import QProgressBar
 
 from .qt_control import QtControl
 

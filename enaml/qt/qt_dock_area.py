@@ -12,7 +12,7 @@ from enaml.widgets.dock_area import ProxyDockArea
 from enaml.widgets.dock_events import DockItemEvent
 
 from .QtCore import QObject, QEvent, QSize, QTimer
-from .QtGui import QTabWidget
+from .QtWidgets import QTabWidget
 
 from .docking.dock_manager import DockManager
 from .docking.event_types import (

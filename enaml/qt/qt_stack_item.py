@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.stack_item import ProxyStackItem
 
-from .QtGui import QFrame
+from .QtWidgets import QFrame
 
 from .q_single_widget_layout import QSingleWidgetLayout
 from .qt_container import QtContainer

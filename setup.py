@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------------
 import sys
 from setuptools import setup, find_packages, Extension
+from setuptools.command.build_ext import build_ext
 
 
 ext_modules = [
@@ -64,6 +65,26 @@ if sys.platform == 'win32':
     )
 
 
+class BuildExt(build_ext):
+    """ A custom build extension for adding compiler-specific options.
+
+    """
+    c_opts = {
+        'msvc': ['/EHsc']
+    }
+
+    def initialize_options(self):
+        super().initialize_options()
+        self.debug = False
+
+    def build_extensions(self):
+        ct = self.compiler.compiler_type
+        opts = self.c_opts.get(ct, [])
+        for ext in self.extensions:
+            ext.extra_compile_args = opts
+        build_ext.build_extensions(self)
+
+
 setup(
     name='enaml',
     version='0.9.8',
@@ -88,4 +109,5 @@ setup(
     },
     entry_points={'console_scripts': ['enaml-run = enaml.runner:main']},
     ext_modules=ext_modules,
+    cmdclass={'build_ext': BuildExt},
 )
