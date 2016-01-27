@@ -89,7 +89,7 @@ WinEnum_Type = {
 
 
 static PyObject*
-PyString_FromHICON( HICON icon, int& width_out, int& height_out )
+PyBytes_FromHICON( HICON icon, int& width_out, int& height_out )
 {
     HDC screen_device = GetDC( 0 );
     HDC hdc = CreateCompatibleDC( screen_device );
@@ -114,7 +114,7 @@ PyString_FromHICON( HICON icon, int& width_out, int& height_out )
     HGDIOBJ old_hdc = ( HBITMAP )SelectObject( hdc, win_bitmap );
     DrawIconEx( hdc, 0, 0, icon, w, h, 0, 0, DI_NORMAL );
 
-    PyObject* result = PyUnicode_FromStringAndSize( ( const char* )bits, w * h * 4 );
+    PyObject* result = PyBytes_FromStringAndSize( ( const char* )bits, w * h * 4 );
 
     // dispose resources created by GetIconInfo
     DeleteObject( icon_info.hbmMask );
@@ -142,7 +142,7 @@ load_icon( PyObject* mod, PyObject* args )
     if( !hicon )
         return Py_BuildValue( "(s, (i, i))", "", -1, -1 );
     int width, height;
-    PyObjectPtr result( PyString_FromHICON( ( HICON )hicon, width, height ) );
+    PyObjectPtr result( PyBytes_FromHICON( ( HICON )hicon, width, height ) );
     if( !result )
         return 0;
     return Py_BuildValue( "(O, (i, i))", result.get(), width, height );
