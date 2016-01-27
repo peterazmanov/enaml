@@ -706,7 +706,7 @@ def register_styles(name, styles):
 
     Parameters
     ----------
-    name : basestring
+    name : str
         The name to associate with the styles.
 
     styles : template
@@ -719,7 +719,7 @@ def register_styles(name, styles):
         This will be raised the name is already registered.
 
     """
-    assert isinstance(name, basestring)
+    assert isinstance(name, str)
     assert isinstance(styles, Template)
     if name in __STYLE_REGISTRY:
         raise ValueError("The '%s' name is already registered." % name)

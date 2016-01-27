@@ -43,10 +43,10 @@ enamldef MessageBox(Dialog):
         The text to display in the instruction area of the dialog. This
         should always be provided.
 
-    content : basestring, optional
+    content : str, optional
         The secondary text to place in the content area of the dialog.
 
-    details : basestring, optional
+    details : str, optional
         Extra information to show in the details area. This string will
         be provided to an Html area, and can therefore contain html
         markup. If this is provided, the details area will be togglable
@@ -59,9 +59,9 @@ enamldef MessageBox(Dialog):
 
     """
     attr image: Image
-    attr text: basestring
-    attr content: basestring
-    attr details: basestring
+    attr text: str
+    attr content: str
+    attr details: str
     attr buttons: list = []
     TaskDialogStyleSheet:
         pass
@@ -80,10 +80,10 @@ def about(parent, title, text):
     parent : Widget or None
         The Enaml widget which should be the parent of the dialog.
 
-    title : basestring
+    title : str
         The text for the window title bar.
 
-    text : basestring
+    text : str
         The main text to display in the dialog.
 
     """
@@ -101,7 +101,7 @@ def critical(parent, title, text, buttons=None):
     parent : Widget or None
         The Enaml widget which should be the parent of the dialog.
 
-    title : basestring
+    title : str
         The text for the window title bar.
 
     buttons : list, optional
@@ -129,7 +129,7 @@ def information(parent, title, text, buttons=None):
     parent : Widget or None
         The Enaml widget which should be the parent of the dialog.
 
-    title : basestring
+    title : str
         The text for the window title bar.
 
     buttons : list, optional
@@ -157,7 +157,7 @@ def question(parent, title, text, buttons=None):
     parent : Widget or None
         The Enaml widget which should be the parent of the dialog.
 
-    title : basestring
+    title : str
         The text for the window title bar.
 
     buttons : list, optional
@@ -186,7 +186,7 @@ def warning(parent, title, text, buttons=None):
     parent : Widget or None
         The Enaml widget which should be the parent of the dialog.
 
-    title : basestring
+    title : str
         The text for the window title bar.
 
     buttons : list, optional

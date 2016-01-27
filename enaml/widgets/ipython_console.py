@@ -50,7 +50,7 @@ class IPythonConsole(Control):
 
         Parameters
         ----------
-        name : basestring
+        name : str
             The name of the variable to retrieve.
 
         default : object, optional

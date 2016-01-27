@@ -30,7 +30,7 @@ class PythonLexer(Qsci.QsciLexerPython):
         'SystemError SystemExit TabError True TypeError UnboundLocalError '
         'UnicodeDecodeError UnicodeEncodeError UnicodeError '
         'UnicodeTranslateError UnicodeWarning UserWarning ValueError Warning '
-        'WindowsError ZeroDivisionError abs all any apply basestring bin bool '
+        'WindowsError ZeroDivisionError abs all any apply bin bool '
         'buffer bytearray bytes callable chr classmethod cmp coerce compile '
         'complex delattr dict dir divmod enumerate eval execfile file filter'
         'float format frozenset getattr globals hasattr hash help hex id input'
