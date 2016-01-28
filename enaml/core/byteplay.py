@@ -17,7 +17,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-__version__ = '0.3'
+__version__ = '0.4'
 __all__ = [
     'opmap',
     'opname',
@@ -42,8 +42,11 @@ __all__ = [
     'Code']
 
 
-import opcode
 from sys import version_info
+if version_info < (3, 4):
+    raise NotImplementedError("Currently only Python versions 3.4 and 3.5 are supported!")
+
+import opcode
 from dis import findlabels
 from types import CodeType
 from enum import Enum
@@ -175,7 +178,6 @@ else:
     from dis import stack_effect
 
 hasflow = hasjump | {
-    WITH_CLEANUP,
     POP_BLOCK,
     END_FINALLY,
     BREAK_LOOP,
@@ -183,6 +185,12 @@ hasflow = hasjump | {
     RAISE_VARARGS,
     STOP_CODE,
     POP_EXCEPT}
+
+if version_info < (3, 5):
+    hasflow |= {WITH_CLEANUP}
+else:
+    hasflow |= {WITH_CLEANUP_START, WITH_CLEANUP_FINISH, SETUP_ASYNC_WITH}
+    coroutine_opcodes = {GET_AWAITABLE, GET_AITER, GET_ANEXT, BEFORE_ASYNC_WITH, SETUP_ASYNC_WITH}
 
 
 class Label:
@@ -208,7 +216,14 @@ CO_NESTED      = 0x0010
 CO_GENERATOR   = 0x0020
 CO_NOFREE      = 0x0040
 
+if version_info >= (3, 5,):
+    CO_COROUTINE          = 0x0080
+    CO_ITERABLE_COROUTINE = 0x0100
+
 CO_FUTURE_BARRY_AS_BDFL = 0x40000
+
+if version_info >= (3, 5,):
+    CO_FUTURE_GENERATOR_STOP = 0x80000
 
 
 class Code(object):
@@ -228,6 +243,12 @@ class Code(object):
     newlocals - boolean: Should a new local namespace be created
                 (True in functions, False for module and exec code)
 
+    force_generator - set CO_GENERATOR in co_flags for generator Code objects without generator-specific code
+    Python 3.5:
+        force_coroutine - set CO_COROUTINE in co_flags for coroutine Code objects (native coroutines) without coroutine-specific code
+        force_iterable_coroutine - set CO_ITERABLE_COROUTINE in co_flags for generator-based coroutine Code objects
+        future_generator_stop - set CO_FUTURE_GENERATOR_STOP flag (see PEP-479)
+
     Not affecting action
     name - string: the name of the code (co_name)
     filename - string: the file name of the code (co_filename)
@@ -239,7 +260,9 @@ class Code(object):
     Label instance. The second item is the argument, if applicable, or None"""
 
     def __init__(self, code, freevars, args, kwonly, varargs, varkwargs, newlocals,
-                 name, filename, firstlineno, docstring, force_generator=False):
+                 name, filename, firstlineno, docstring,
+                 force_generator=False,
+                 *, force_coroutine=None, force_iterable_coroutine=None, future_generator_stop=None):
         self.code = code
         self.freevars = freevars
         self.args = args
@@ -252,6 +275,13 @@ class Code(object):
         self.firstlineno = firstlineno
         self.docstring = docstring
         self.force_generator = force_generator
+        if version_info < (3, 5):
+            # Flags unsupported in earlier versions
+            assert force_coroutine is None and force_iterable_coroutine is None and future_generator_stop is None
+        else:
+            self.force_coroutine = force_coroutine
+            self.force_iterable_coroutine = force_iterable_coroutine
+            self.future_generator_stop = future_generator_stop
 
     @staticmethod
     def _findlinestarts(code):
@@ -284,6 +314,8 @@ class Code(object):
         n = len(co_code)
         i = extended_arg = 0
         is_generator = False
+        if version_info >= (3, 5,):
+            is_coroutine = False
 
         while i < n:
             op = Opcode(co_code[i])
@@ -325,9 +357,22 @@ class Code(object):
             if op == YIELD_VALUE or op == YIELD_FROM:
                 is_generator = True
 
+            if version_info >= (3, 5,) and op in coroutine_opcodes:
+                is_coroutine = True
+
         varargs = not not co.co_flags & CO_VARARGS
         varkwargs = not not co.co_flags & CO_VARKEYWORDS
         force_generator = not is_generator and (co.co_flags & CO_GENERATOR)
+
+        if version_info >= (3, 5,):
+            force_coroutine = not is_coroutine and (co.co_flags & CO_COROUTINE)
+            force_iterable_coroutine = co.co_flags & CO_ITERABLE_COROUTINE
+            assert not (force_coroutine and force_iterable_coroutine)
+            future_generator_stop = co.co_flags & CO_FUTURE_GENERATOR_STOP
+        else:
+            force_coroutine = None
+            force_iterable_coroutine =None
+            future_generator_stop = None
 
         return cls(code=code,
                    freevars=co.co_freevars,
@@ -340,7 +385,10 @@ class Code(object):
                    filename=co.co_filename,
                    firstlineno=co.co_firstlineno,
                    docstring=co.co_consts[0] if co.co_consts and isinstance(co.co_consts[0], str) else None,
-                   force_generator=force_generator)
+                   force_generator=force_generator,
+                   force_coroutine=force_coroutine,
+                   force_iterable_coroutine=force_iterable_coroutine,
+                   future_generator_stop=future_generator_stop)
 
     def __eq__(self, other):
         try:
@@ -354,8 +402,15 @@ class Code(object):
                     self.filename != other.filename or
                     self.firstlineno != other.firstlineno or
                     self.docstring != other.docstring or
+                    self.force_generator != other.force_generator or
                     len(self.code) != len(other.code)):
                 return False
+            elif version_info >= (3, 5,):
+                if (self.force_coroutine != other.force_coroutine or
+                        self.force_iterable_coroutine != other.force_iterable_coroutine or
+                        self.future_generator_stop != other.future_generator_stop):
+                    return False
+
 
             # This isn't trivial due to labels
             lmap = {}
@@ -391,7 +446,12 @@ class Code(object):
         # stack recording consistent, the get_next_stacks function will always
         # yield the stack state of the target as if 1 object was pushed, but
         # this will be corrected in the actual stack recording
-        sf_targets = {label_pos[arg] for op, arg in code if (op == SETUP_FINALLY or op == SETUP_WITH)}
+        if version_info < (3, 5):
+            sf_targets = {label_pos[arg] for op, arg in code
+                          if (op == SETUP_FINALLY or op == SETUP_WITH)}
+        else:
+            sf_targets = {label_pos[arg] for op, arg in code
+                          if (op == SETUP_FINALLY or op == SETUP_WITH or op == SETUP_ASYNC_WITH)}
 
         states = [None] * len(code)
         maxsize = 0
@@ -590,13 +650,13 @@ class Code(object):
                         log = cur_state.newlog("END_FINALLY (-6)")
                         op += State(next_pos, cur_state.newstack(-6), cur_state.block_stack, log),
 
-                elif o == SETUP_WITH:
+                elif o == SETUP_WITH or (version_info >= (3, 5,) and o == SETUP_ASYNC_WITH):
                     inside_with_block = cur_state.newlog("SETUP_WITH, with-block (+1, +block)")
                     inside_finally_block = cur_state.newlog("SETUP_WITH, finally (+1)")
                     op += State(label_pos[arg], cur_state.newstack(1), cur_state.block_stack, inside_finally_block),\
                           State(next_pos, cur_state.stack + (1,), cur_state.block_stack + (BlockType.WITH_BLOCK,), inside_with_block)
 
-                elif o == WITH_CLEANUP:
+                elif version_info < (3, 5) and o == WITH_CLEANUP:
                     # There is special case when 'with' __exit__ function returns True,
                     # that's the signal to silence exception, in this case additional element is pushed
                     # and next END_FINALLY command won't reraise exception.
@@ -605,8 +665,28 @@ class Code(object):
                     op += State(next_pos, cur_state.newstack(-1), cur_state.block_stack, log),\
                           State(next_pos, cur_state.newstack(-7) + (8,), cur_state.block_stack + (BlockType.SILENCED_EXCEPTION_BLOCK,), silenced_exception_log)
 
+                elif version_info >= (3, 5,) and o == WITH_CLEANUP_START:
+                    # There is special case when 'with' __exit__ function returns True,
+                    # that's the signal to silence exception, in this case additional element is pushed
+                    # and next END_FINALLY command won't reraise exception.
+                    # Emulate this situation on WITH_CLEANUP_START with creating special block which will be
+                    # handled differently by WITH_CLEANUP_FINISH and will cause END_FINALLY not to reraise exception.
+                    log = cur_state.newlog("WITH_CLEANUP_START (+1)")
+                    silenced_exception_log = cur_state.newlog("WITH_CLEANUP_START silenced_exception (+block)")
+                    op += State(next_pos, cur_state.newstack(1), cur_state.block_stack, log),\
+                          State(next_pos, cur_state.newstack(-7) + (9,), cur_state.block_stack + (BlockType.SILENCED_EXCEPTION_BLOCK,), silenced_exception_log)
+
+                elif version_info >= (3, 5,) and o == WITH_CLEANUP_FINISH:
+                    if cur_state.block_stack[-1] == BlockType.SILENCED_EXCEPTION_BLOCK:
+                        # See comment in WITH_CLEANUP_START handler
+                        log = cur_state.newlog("WITH_CLEANUP_FINISH silenced_exception (-1)")
+                        op += State(next_pos, cur_state.newstack(-1), cur_state.block_stack, log),
+                    else:
+                        log = cur_state.newlog("WITH_CLEANUP_FINISH (-2)")
+                        op += State(next_pos, cur_state.newstack(-2), cur_state.block_stack, log),
+
                 else:
-                    raise ValueError("Unhandled opcode %s" % op)
+                    raise ValueError("Unhandled opcode %s" % o)
 
         return maxsize + 6  # for exception raise in deepest place
 
@@ -622,6 +702,10 @@ class Code(object):
         is_generator = self.force_generator or (YIELD_VALUE in co_flags or YIELD_FROM in co_flags)
         no_free = (not self.freevars) and (not co_flags & hasfree)
 
+        if version_info >= (3, 5,):
+            is_native_coroutine = bool(self.force_coroutine or (co_flags & coroutine_opcodes))
+            assert not (is_native_coroutine and self.force_iterable_coroutine)
+
         co_flags =\
             (not(STORE_NAME in co_flags or LOAD_NAME in co_flags or DELETE_NAME in co_flags)) |\
             (self.newlocals and CO_NEWLOCALS) |\
@@ -630,6 +714,11 @@ class Code(object):
             (is_generator and CO_GENERATOR) |\
             (no_free and CO_NOFREE) |\
             (nested and CO_NESTED)
+
+        if version_info >= (3, 5,):
+            co_flags |= (is_native_coroutine and CO_COROUTINE) |\
+                        (self.force_iterable_coroutine and CO_ITERABLE_COROUTINE) |\
+                        (self.future_generator_stop and CO_FUTURE_GENERATOR_STOP)
 
         co_consts = [self.docstring]
         co_names = []
