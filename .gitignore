@@ -12,6 +12,7 @@
 /docs/build
 /tools/pygments/build
 /tools/pygments/dist
+/.idea
 
 .gitignore~
 *.orig
