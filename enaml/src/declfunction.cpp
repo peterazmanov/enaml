@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include "pythonhelpersex.h"
+#include "py23compat.h"
 
 
 using namespace PythonHelpers;
@@ -153,7 +154,15 @@ PyTypeObject DFunc_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    0,                                      /* tp_reserved */
+#if PY_MAJOR_VERSION >= 3
+#if PY_MINOR_VERSION > 4
+	( PyAsyncMethods* )0,                  /* tp_as_async */
+#else
+	( void* ) 0,                           /* tp_reserved */
+#endif
+#else
+	( cmpfunc )0,                          /* tp_compare */
+#endif
     (reprfunc)DFunc_repr,                   /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)0,                  /* tp_as_sequence */

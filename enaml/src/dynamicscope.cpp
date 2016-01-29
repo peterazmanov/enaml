@@ -6,7 +6,15 @@
 | The full license is in the file COPYING.txt, distributed with this software.
 |----------------------------------------------------------------------------*/
 #include "pythonhelpersex.h"
+#include "py23compat.h"
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wdeprecated-writable-strings"
+#endif
+
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 
 using namespace PythonHelpers;
 
@@ -265,7 +273,7 @@ set_dynamic_attr( PyObject* obj, PyObject* name, PyObject* value )
             PyErr_Format(
                 PyExc_AttributeError,
                 "'%.50s' object attribute '%.400s' is read-only",
-                tp->tp_name, PyUnicode_1BYTE_DATA( name )
+                tp->tp_name, Py23Str_AS_STRING( name )
             );
 
         // Step up to the parent object
@@ -313,10 +321,10 @@ Nonlocals_repr( Nonlocals* self )
     PyObjectPtr pystr( PyObject_Str( self->owner ) );
     if( !pystr )
         return 0;
-    return PyUnicode_FromFormat(
+    return Py23Str_FromFormat(
         "%s[%s]",
         Py_TYPE(self)->tp_name,
-        PyUnicode_1BYTE_DATA( pystr.get() )
+        Py23Str_AS_STRING( pystr.get() )
     );
 }
 
@@ -366,7 +374,7 @@ Nonlocals_getattro( Nonlocals* self, PyObject* name )
             PyExc_AttributeError,
             "'%.50s' object has no attribute '%.400s'",
             Py_TYPE(self)->tp_name,
-            PyUnicode_1BYTE_DATA( name )
+            Py23Str_AS_STRING( name )
         );
     return res;
 }
@@ -381,7 +389,7 @@ Nonlocals_setattro( Nonlocals* self, PyObject* name, PyObject* value )
             PyExc_AttributeError,
             "'%.50s' object has no attribute '%.400s'",
             Py_TYPE(self)->tp_name,
-            PyUnicode_1BYTE_DATA( name )
+            Py23Str_AS_STRING( name )
         );
     return res;
 }
@@ -390,7 +398,7 @@ Nonlocals_setattro( Nonlocals* self, PyObject* name, PyObject* value )
 static PyObject*
 Nonlocals_getitem( Nonlocals* self, PyObject* key )
 {
-    if( !PyUnicode_CheckExact( key ) )
+    if( !Py23Str_CheckExact( key ) )
         return py_expected_type_fail( key, "str" );
     PyObject* res = load_dynamic_attr( self->owner, key, self->tracer );
     if( !res && !PyErr_Occurred() )
@@ -402,7 +410,7 @@ Nonlocals_getitem( Nonlocals* self, PyObject* key )
 static int
 Nonlocals_setitem( Nonlocals* self, PyObject* key, PyObject* value )
 {
-    if( !PyUnicode_CheckExact( key ) )
+    if( !Py23Str_CheckExact( key ) )
     {
         py_expected_type_fail( key, "str" );
         return -1;
@@ -417,7 +425,7 @@ Nonlocals_setitem( Nonlocals* self, PyObject* key, PyObject* value )
 static int
 Nonlocals_contains( Nonlocals* self, PyObject* key )
 {
-    if( !PyUnicode_CheckExact( key ) )
+    if( !Py23Str_CheckExact( key ) )
     {
         py_expected_type_fail( key, "str" );
         return -1;
@@ -458,7 +466,15 @@ PyTypeObject Nonlocals_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    0,                                      /* tp_reserved */
+#if PY_MAJOR_VERSION >= 3
+#if PY_MINOR_VERSION > 4
+	( PyAsyncMethods* )0,                  /* tp_as_async */
+#else
+	( void* ) 0,                           /* tp_reserved */
+#endif
+#else
+	( cmpfunc )0,                          /* tp_compare */
+#endif
     (reprfunc)Nonlocals_repr,               /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)&Nonlocals_as_sequence, /* tp_as_sequence */
@@ -580,7 +596,7 @@ DynamicScope_dealloc( DynamicScope* self )
 static PyObject*
 DynamicScope_getitem( DynamicScope* self, PyObject* key )
 {
-    if( !PyUnicode_CheckExact( key ) )
+    if( !Py23Str_CheckExact( key ) )
         return py_expected_type_fail( key, "str" );
 
     PyObject* res;
@@ -594,15 +610,15 @@ DynamicScope_getitem( DynamicScope* self, PyObject* key )
     }
 
     // 'self' magic
-    if( strcmp( (char *)PyUnicode_1BYTE_DATA( key ), "self" ) == 0 )
+    if( strcmp( (char *)Py23Str_AS_STRING( key ), "self" ) == 0 )
         return newref( self->owner );
 
     // 'change' magic
-    if( self->change && strcmp( (char *)PyUnicode_1BYTE_DATA( key ), "change" ) == 0 )
+    if( self->change && strcmp( (char *)Py23Str_AS_STRING( key ), "change" ) == 0 )
         return newref( self->change );
 
     // 'nonlocals' magic
-    if( strcmp( (char *)PyUnicode_1BYTE_DATA( key ), "nonlocals" ) == 0 )
+    if( strcmp( (char *)Py23Str_AS_STRING( key ), "nonlocals" ) == 0 )
     {
         if( !self->f_nonlocals )
         {
@@ -617,7 +633,7 @@ DynamicScope_getitem( DynamicScope* self, PyObject* key )
     }
 
     // __scope__ magic
-    if( strcmp( (char *)PyUnicode_1BYTE_DATA( key ), "__scope__" ) == 0 )
+    if( strcmp( (char *)Py23Str_AS_STRING( key ), "__scope__" ) == 0 )
         return newref( pyobject_cast( self ) );
 
     // value from the local scope
@@ -655,7 +671,7 @@ DynamicScope_getitem( DynamicScope* self, PyObject* key )
 static int
 DynamicScope_setitem( DynamicScope* self, PyObject* key, PyObject* value )
 {
-    if( !PyUnicode_CheckExact( key ) )
+    if( !Py23Str_CheckExact( key ) )
     {
         py_expected_type_fail( key, "str" );
         return -1;
@@ -680,7 +696,7 @@ DynamicScope_setitem( DynamicScope* self, PyObject* key, PyObject* value )
 static int
 DynamicScope_contains( DynamicScope* self, PyObject* key )
 {
-    if( !PyUnicode_CheckExact( key ) )
+    if( !Py23Str_CheckExact( key ) )
     {
         py_expected_type_fail( key, "str" );
         return -1;
@@ -691,19 +707,19 @@ DynamicScope_contains( DynamicScope* self, PyObject* key )
         return 1;
 
     // 'self' magic
-    if( strcmp( (char *)PyUnicode_1BYTE_DATA( key ), "self" ) == 0 )
+    if( strcmp( (char *)Py23Str_AS_STRING( key ), "self" ) == 0 )
         return 1;
 
     // 'change' magic
-    if( self->change && strcmp( (char *)PyUnicode_1BYTE_DATA( key ), "change" ) == 0 )
+    if( self->change && strcmp( (char *)Py23Str_AS_STRING( key ), "change" ) == 0 )
         return 1;
 
     // 'nonlocals' magic
-    if( strcmp( (char *)PyUnicode_1BYTE_DATA( key ), "nonlocals" ) == 0 )
+    if( strcmp( (char *)Py23Str_AS_STRING( key ), "nonlocals" ) == 0 )
         return 1;
 
     // __scope__ magic
-    if( strcmp( (char *)PyUnicode_1BYTE_DATA( key ), "__scope__" ) == 0 )
+    if( strcmp( (char *)Py23Str_AS_STRING( key ), "__scope__" ) == 0 )
         return 1;
 
     // value from the local scope
@@ -761,7 +777,15 @@ PyTypeObject DynamicScope_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    0,                                      /* tp_reserved */
+#if PY_MAJOR_VERSION >= 3
+#if PY_MINOR_VERSION > 4
+	( PyAsyncMethods* )0,                  /* tp_as_async */
+#else
+	( void* ) 0,                           /* tp_reserved */
+#endif
+#else
+	( cmpfunc )0,                          /* tp_compare */
+#endif
     (reprfunc)0,                            /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)&DynamicScope_as_sequence, /* tp_as_sequence */
@@ -805,20 +829,15 @@ struct module_state {
     PyObject *error;
 };
 
-#if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-#else
-#define GETSTATE(m) (&_state)
-static struct module_state _state;
-#endif
 
 static PyMethodDef
 dynamicscope_methods[] = {
     { 0 } // sentinel
 };
 
-
 #if PY_MAJOR_VERSION >= 3
+
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 
 static int dynamicscope_traverse(PyObject *m, visitproc visit, void *arg) {
     Py_VISIT(GETSTATE(m)->error);
@@ -843,17 +862,14 @@ static struct PyModuleDef moduledef = {
         NULL
 };
 
-#define INITERROR return NULL
-
-PyMODINIT_FUNC
-PyInit_dynamicscope(void)
-
 #else
-#define INITERROR return
 
-PyMODINIT_FUNC
-initdynamicscope(void)
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+
 #endif
+
+MOD_INIT_FUNC(dynamicscope)
 {
 #if PY_MAJOR_VERSION >= 3
     PyObject *mod = PyModule_Create(&moduledef);
@@ -862,10 +878,10 @@ initdynamicscope(void)
 #endif
     if( !mod )
         INITERROR;
-    parent_str = PyUnicode_FromString( "_parent" );
+    parent_str = Py23Str_FromString( "_parent" );
     if( !parent_str )
         INITERROR;
-    dynamic_load_str = PyUnicode_FromString( "dynamic_load" );
+    dynamic_load_str = Py23Str_FromString( "dynamic_load" );
     if( !dynamic_load_str )
         INITERROR;
     UserKeyError = PyErr_NewException( "dynamicscope.UserKeyError", 0, 0 );
