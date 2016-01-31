@@ -5,6 +5,8 @@
 #
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
+from __future__ import print_function
+
 import datetime
 
 from atom.api import Atom, Unicode, Range, Bool, Value, Int, Tuple, observe

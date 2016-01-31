@@ -5,6 +5,8 @@
 #
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
+from __future__ import print_function
+
 from atom.api import Subclass, Unicode
 
 from enaml.widgets.api import Container

@@ -13,6 +13,7 @@ exposing individual attributes instead of entire widgets.
 
 << autodoc-me >>
 """
+from future.builtins import str
 from enaml.widgets.api import Window, Container, Slider, Field, GroupBox
 
 
