@@ -5,6 +5,9 @@
 #
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
+from __future__ import unicode_literals
+
+from future.builtins import str
 from atom.api import (
     Enum, Bool, Callable, List, Unicode, Typed, ForwardTyped, Event
 )

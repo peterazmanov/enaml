@@ -7,10 +7,12 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta
 
+
+from future.utils import with_metaclass
 import kiwisolver as kiwi
 
 
-class LinearSymbolic(object, metaclass=ABCMeta):
+class LinearSymbolic(with_metaclass(ABCMeta, object)):
     """ An abstract base class for testing linear symbolic interfaces.
 
     """

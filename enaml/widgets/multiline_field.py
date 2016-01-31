@@ -5,7 +5,9 @@
 #
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
-from atom.api import Bool, Typed, ForwardTyped, Str, observe, set_default
+from __future__ import unicode_literals
+
+from atom.api import Bool, Typed, ForwardTyped, Unicode, observe, set_default
 
 from enaml.core.declarative import d_
 
@@ -40,7 +42,7 @@ class MultilineField(Control):
 
     """
     #: The str text to display in the field.
-    text = d_(Str())
+    text = d_(Unicode())
 
     #: Whether or not the field is read only.
     read_only = d_(Bool(False))

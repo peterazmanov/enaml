@@ -8,10 +8,14 @@
 """ Command-line tool to run .enaml files.
 
 """
+from __future__ import print_function
+
 import optparse
 import os
 import sys
 import types
+
+from future.utils import exec_
 
 from enaml import imports
 from enaml.core.parser import parse
@@ -55,7 +59,7 @@ def main():
     # Bung in the command line arguments.
     sys.argv = [enaml_file] + script_argv
     with imports():
-        exec(code, ns)
+        exec_(code, ns)
 
     requested = options.component
     if requested in ns:

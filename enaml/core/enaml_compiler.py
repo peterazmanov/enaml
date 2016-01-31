@@ -166,10 +166,10 @@ class EnamlCompiler(cmn.CompilerBase):
         """
         assert isinstance(node, Module), 'invalid node'
 
-        # Protect against unicode filenames, which are incompatible
+        # On Python 2 protect against unicode filenames, which are incompatible
         # with code objects created via types.CodeType
-        #if isinstance(filename, str):
-        #    filename = filename.encode(sys.getfilesystemencoding())
+        if sys.version_info[0] == 3 and isinstance(filename, type(u'')):
+            filename = filename.encode(sys.getfilesystemencoding())
 
         # Create the compiler and generate the code.
         compiler = cls(filename=filename)
