@@ -9,7 +9,7 @@ from atom.api import Int, Typed
 
 from enaml.widgets.combo_box import ProxyComboBox
 
-from .QtWidgets import QComboBox
+from .QtGui import QComboBox
 
 from .qt_control import QtControl
 

@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.push_button import ProxyPushButton
 
-from .QtWidgets import QPushButton
+from .QtGui import QPushButton
 
 from .qt_abstract_button import QtAbstractButton
 from .qt_menu import QtMenu

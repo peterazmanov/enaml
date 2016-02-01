@@ -10,7 +10,7 @@ if QT_API != 'pyqt':
     msg = 'the Qt Scintilla widget is only available when using PyQt'
     raise ImportError(msg)
 
-from PyQt5 import Qsci
+from PyQt4 import Qsci
 
 
 

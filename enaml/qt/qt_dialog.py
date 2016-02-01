@@ -11,7 +11,7 @@ from enaml.widgets.dialog import ProxyDialog
 from enaml.widgets.window import CloseEvent
 
 from .QtCore import Qt
-from .QtWidgets import QDialog
+from .QtGui import QDialog
 
 from .q_deferred_caller import deferredCall
 from .q_window_base import QWindowBase

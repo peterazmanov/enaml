@@ -6,8 +6,7 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from enaml.qt.QtCore import Qt, QSize, QEvent
-from enaml.qt.QtGui import QPainter
-from enaml.qt.QtWidgets import QFrame
+from enaml.qt.QtGui import QFrame, QPainter
 
 
 class QTextLabel(QFrame):

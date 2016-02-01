@@ -10,8 +10,7 @@ import sys
 from atom.api import Atom, Float, Int, Str, Typed, Value, set_default
 
 from enaml.qt.QtCore import Qt, QRect, QPoint
-from enaml.qt.QtWidgets import QFrame
-from enaml.qt.QtGui import QImage, QPainter
+from enaml.qt.QtGui import QFrame, QImage, QPainter
 
 # Make sure the resources get registered.
 from . import dock_resources

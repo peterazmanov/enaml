@@ -6,8 +6,10 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from enaml.qt.QtCore import QPoint, QRect, QEvent
-from enaml.qt.QtGui import QColor, QPainter
-from enaml.qt.QtWidgets import QAbstractButton, QStyle, QStyleOption, QToolTip
+from enaml.qt.QtGui import (
+    QAbstractButton, QColor, QPainter, QStyle, QStyleOption, QToolTip
+)
+
 
 class QBitmapButton(QAbstractButton):
     """ A button widget which renders a bitmap.

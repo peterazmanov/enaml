@@ -9,6 +9,6 @@ from . import QT_API
 
 
 if QT_API == 'pyqt':
-    from PyQt5.QtScript import *
+    from PyQt4.QtScript import *
 else:
     from PySide.QtScript import *

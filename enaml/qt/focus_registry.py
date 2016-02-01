@@ -8,7 +8,7 @@
 """ A simple registry module for tracking focus widget mappings.
 
 """
-from .QtWidgets import QApplication
+from .QtGui import QApplication
 
 
 #: The internal mapping of widget to proxy object.

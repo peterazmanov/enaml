@@ -11,8 +11,7 @@ from enaml.colors import Color
 from enaml.widgets.color_dialog import ProxyColorDialog
 
 from .QtCore import Signal
-from .QtGui import QColor
-from .QtWidgets import QColorDialog
+from .QtGui import QColor, QColorDialog
 
 from .qt_toolkit_dialog import QtToolkitDialog
 

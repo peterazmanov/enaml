@@ -7,7 +7,7 @@
 #------------------------------------------------------------------------------
 from enaml.widgets.focus_tracker import ProxyFocusTracker
 
-from .QtWidgets import QApplication
+from .QtGui import QApplication
 
 from . import focus_registry
 from .qt_toolkit_object import QtToolkitObject

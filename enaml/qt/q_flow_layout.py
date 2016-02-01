@@ -8,7 +8,7 @@
 from abc import ABCMeta, abstractmethod
 
 from .QtCore import Qt, QSize, QRect
-from .QtWidgets import QLayout, QWidgetItem
+from .QtGui import QLayout, QWidgetItem
 
 
 class AbstractFlowWidget(object, metaclass=ABCMeta):

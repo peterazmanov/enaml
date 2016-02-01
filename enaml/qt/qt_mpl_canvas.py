@@ -9,15 +9,15 @@ from atom.api import Typed
 
 from enaml.widgets.mpl_canvas import ProxyMPLCanvas
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 try:
-    from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QTAgg
+    from matplotlib.backends.backend_qt4agg import (NavigationToolbar2QTAgg
                                                     as NavigationToolbar2QT)
 except ImportError:
-    from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
+    from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT
 
 from .QtCore import Qt
-from .QtWidgets import QFrame, QVBoxLayout
+from .QtGui import QFrame, QVBoxLayout
 
 from .qt_control import QtControl
 

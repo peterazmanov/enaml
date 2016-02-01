@@ -9,7 +9,7 @@ from . import QT_API
 
 
 if QT_API == 'pyqt':
-    from PyQt5.QtCore import *
+    from PyQt4.QtCore import *
     Property = pyqtProperty
     Signal = pyqtSignal
     Slot = pyqtSlot

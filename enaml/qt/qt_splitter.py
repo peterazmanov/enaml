@@ -12,7 +12,7 @@ from atom.api import Typed
 from enaml.widgets.splitter import ProxySplitter
 
 from .QtCore import Qt, QEvent, Signal
-from .QtWidgets import (
+from .QtGui import (
     QSplitter, QSplitterHandle, QVBoxLayout, QFrame, QApplication
 )
 

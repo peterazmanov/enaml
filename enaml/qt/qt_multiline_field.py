@@ -10,7 +10,7 @@ from atom.api import Int, Typed
 from enaml.widgets.multiline_field import ProxyMultilineField
 
 from .QtCore import QTimer, Signal
-from .QtWidgets import QTextEdit
+from .QtGui import QTextEdit
 
 from .qt_control import QtControl
 

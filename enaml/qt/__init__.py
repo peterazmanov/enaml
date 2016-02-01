@@ -24,7 +24,7 @@ QT_API = os.environ.get('QT_API', '').lower().strip()
 
 if not QT_API:
     try:
-        import PyQt5
+        import PyQt4
         prepare_pyqt()
         QT_API = os.environ['QT_API'] = 'pyqt'
     except ImportError:
@@ -32,7 +32,7 @@ if not QT_API:
             import PySide
             QT_API = os.environ['QT_API'] = 'pyside'
         except ImportError:
-            raise ImportError('Cannot import PyQt5 or PySide')
+            raise ImportError('Cannot import PyQt4 or PySide')
 elif QT_API == 'pyqt':
     prepare_pyqt()
 elif QT_API != 'pyside':

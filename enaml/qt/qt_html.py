@@ -9,7 +9,7 @@ from atom.api import Typed
 
 from enaml.widgets.html import ProxyHtml
 
-from .QtWidgets import QTextEdit
+from .QtGui import QTextEdit
 
 from .qt_control import QtControl
 

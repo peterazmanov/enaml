@@ -10,8 +10,7 @@ from atom.api import Int, IntEnum, Typed
 from enaml.widgets.stack import ProxyStack
 
 from .QtCore import QTimer, QEvent, Signal
-from .QtGui import QPixmap
-from .QtWidgets import QStackedWidget
+from .QtGui import QStackedWidget, QPixmap
 
 from .q_pixmap_painter import QPixmapPainter
 from .q_pixmap_transition import (
@@ -152,8 +151,8 @@ class QStack(QStackedWidget):
         size = self.size()
         src_widget.resize(size)
         dst_widget.resize(size)
-        src_pixmap = src_widget.grab()
-        dst_pixmap = dst_widget.grab()
+        src_pixmap = QPixmap.grabWidget(src_widget)
+        dst_pixmap = QPixmap.grabWidget(dst_widget)
         out_pixmap = QPixmap(size)
         transition.setPixmaps(src_pixmap, dst_pixmap, out_pixmap)
 
