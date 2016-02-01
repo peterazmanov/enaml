@@ -5,6 +5,7 @@
 #
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
+from past.builtins import basestring
 from atom.api import Atom, atomref
 
 from .alias import Alias
@@ -157,7 +158,7 @@ class StandardTracer(CodeTracer):
         nkwargs = (argspec >> 8) & 0xFF
         if (func is getattr and (nargs == 2 or nargs == 3) and nkwargs == 0):
             obj, attr = argtuple[0], argtuple[1]
-            if isinstance(obj, Atom) and isinstance(attr, str):
+            if isinstance(obj, Atom) and isinstance(attr, basestring):
                 self.trace_atom(obj, attr)
 
     def return_value(self, value):

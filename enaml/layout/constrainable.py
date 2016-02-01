@@ -7,12 +7,13 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta
 
+from future.utils import with_metaclass
 from atom.api import Atom, Constant, DefaultValue, Enum
 
 import kiwisolver as kiwi
 
 
-class Constrainable(object, metaclass=ABCMeta):
+class Constrainable(with_metaclass(ABCMeta, object)):
     """ An abstract base class for defining constrainable objects.
 
     Implementations must provide `top`, `bottom`, `left`, `right`,

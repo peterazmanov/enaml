@@ -9,6 +9,8 @@ from collections import deque
 import sys
 import warnings
 
+from future.utils import with_metaclass
+from past.builtins import basestring
 from atom.api import Atom, Int, Bool, Coerced, Enum, List, Unicode
 
 from enaml.nodevisitor import NodeVisitor
@@ -172,13 +174,13 @@ class _SplitLayoutItemMeta(type):
         return isinstance(instance, (ItemLayout, TabLayout, SplitLayout))
 
     def __call__(cls, item):
-        if isinstance(item, str):
+        if isinstance(item, basestring):
             return ItemLayout(item)
         msg = "cannot coerce '%s' to a 'SplitLayout' item"
         raise TypeError(msg % type(item).__name__)
 
 
-class _SplitLayoutItem(metaclass=_SplitLayoutItemMeta):
+class _SplitLayoutItem(with_metaclass(_SplitLayoutItemMeta, object)):
     """ A private class which performs type checking for split layouts.
 
     """
@@ -199,7 +201,7 @@ class SplitLayout(LayoutNode):
     items = List(Coerced(_SplitLayoutItem))
 
     def __init__(self, *items, **kwargs):
-        super().__init__(items=list(items), **kwargs)
+        super(SplitLayout, self).__init__(items=list(items), **kwargs)
 
     def children(self):
         """ Get the list of children of the split layout.
@@ -223,7 +225,7 @@ class VSplitLayout(SplitLayout):
     """
     def __init__(self, *items, **kwargs):
         kwargs['orientation'] = 'vertical'
-        super().__init__(*items, **kwargs)
+        super(VSplitLayout, self).__init__(*items, **kwargs)
 
 
 class DockBarLayout(LayoutNode):
@@ -252,13 +254,13 @@ class _AreaLayoutItemMeta(type):
         return isinstance(instance, allowed)
 
     def __call__(cls, item):
-        if isinstance(item, str):
+        if isinstance(item, basestring):
             return ItemLayout(item)
         msg = "cannot coerce '%s' to an 'AreaLayout' item"
         raise TypeError(msg % type(item).__name__)
 
 
-class _AreaLayoutItem(object, metaclass=_AreaLayoutItemMeta):
+class _AreaLayoutItem(with_metaclass(_AreaLayoutItemMeta, object)):
     """ A private class which performs type checking for area layouts.
 
     """
@@ -306,14 +308,14 @@ class _DockLayoutItemMeta(type):
         return isinstance(instance, (ItemLayout, AreaLayout))
 
     def __call__(cls, item):
-        if isinstance(item, str):
+        if isinstance(item, basestring):
             return ItemLayout(item)
         if isinstance(item, (SplitLayout, TabLayout)):
             return AreaLayout(item)
         msg = "cannot coerce '%s' to a 'DockLayout' item"
         raise TypeError(msg % type(item).__name__)
 
-class _DockLayoutItem(metaclass=_DockLayoutItemMeta):
+class _DockLayoutItem(with_metaclass(_DockLayoutItemMeta, object)):
     """ A private class which performs type checking for dock layouts.
 
     """

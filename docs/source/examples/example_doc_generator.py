@@ -15,7 +15,7 @@ Look for example enaml files with the line:
 Generate an rst file, then open the app and take a snapshot.
 
 """
-
+from __future__ import print_function
 import os
 os.environ['QT_API'] = 'pyqt'
 import shutil
@@ -29,18 +29,18 @@ from enaml.application import timed_call
 
 class SnapShot(Atom):
     """ Generate a snapshot of an enaml view.
-    
+
     """
-    
+
     #: The snapshot save path.
     path = Unicode()
-    
+
     #: The enaml view object.
     view = Value()
-        
+
     def _observe_view(self, change):
         """ Move window and allow it to draw before taking the snapshot.
-        
+
         """
         if change['type'] == 'create':
             self.view.initial_position = (10, 10)
@@ -49,7 +49,7 @@ class SnapShot(Atom):
 
     def snapshot(self):
         """ Take a snapshot of the window and close it.
-        
+
         """
         widget = self.view.proxy.widget
         framesize =  widget.window().frameSize()
@@ -73,7 +73,7 @@ def generate_example_doc(app, docs_path, script_path):
     script_name = os.path.basename(script_path)
     script_name = script_name[:script_name.find('.')]
     print('generating doc for %s' % script_name)
-    
+
     script_title = script_name.replace('_', ' ').title()
     script_image_name = 'ex_' + script_name + '.png'
     image_path = os.path.join(docs_path, 'images', script_image_name)
@@ -151,7 +151,7 @@ def main():
     docs_path = os.path.dirname(__file__)
     base_path = '../../../examples'
     base_path = os.path.realpath(os.path.join(docs_path, base_path))
-    
+
     enaml_cache_dir = os.path.join(docs_path, '__enamlcache__')
 
     for dirname, dirnames, filenames in os.walk(base_path):

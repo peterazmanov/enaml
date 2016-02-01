@@ -8,6 +8,8 @@
 """ A utility module for dealing with CSS3 font strings.
 
 """
+from past.builtins import basestring
+
 from atom.api import Coerced
 
 from .fontext import Font, FontStyle, FontCaps
@@ -174,7 +176,7 @@ def coerce_font(font):
     """ The coercing function for the FontMember.
 
     """
-    if isinstance(font, str):
+    if isinstance(font, basestring):
         return parse_font(font)
 
 

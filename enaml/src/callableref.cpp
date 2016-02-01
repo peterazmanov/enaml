@@ -8,7 +8,15 @@
 #include <iostream>
 #include <sstream>
 #include "pythonhelpers.h"
+#include "py23compat.h"
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wdeprecated-writable-strings"
+#endif
+
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 
 using namespace PythonHelpers;
 
@@ -137,7 +145,15 @@ PyTypeObject CallableRef_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    0,                                      /* tp_reserved */
+#if PY_MAJOR_VERSION >= 3
+#if PY_MINOR_VERSION > 4
+	( PyAsyncMethods* )0,                  /* tp_as_async */
+#else
+	( void* ) 0,                           /* tp_reserved */
+#endif
+#else
+	( cmpfunc )0,                          /* tp_compare */
+#endif
     (reprfunc)0,                            /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)0,                  /* tp_as_sequence */
@@ -189,20 +205,15 @@ struct module_state {
     PyObject *error;
 };
 
-#if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-#else
-#define GETSTATE(m) (&_state)
-static struct module_state _state;
-#endif
 
 static PyMethodDef
 callableref_methods[] = {
     { 0 } // Sentinel
 };
 
-
 #if PY_MAJOR_VERSION >= 3
+
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 
 static int callableref_traverse(PyObject *m, visitproc visit, void *arg) {
     Py_VISIT(GETSTATE(m)->error);
@@ -226,17 +237,14 @@ static struct PyModuleDef moduledef = {
         NULL
 };
 
-#define INITERROR return NULL
-
-PyMODINIT_FUNC
-PyInit_callableref(void)
-
 #else
-#define INITERROR return
 
-PyMODINIT_FUNC
-initcallableref(void)
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+
 #endif
+
+MOD_INIT_FUNC(callableref)
 {
 #if PY_MAJOR_VERSION >= 3
     PyObject *mod = PyModule_Create(&moduledef);

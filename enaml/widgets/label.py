@@ -6,7 +6,7 @@
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
 from atom.api import (
-    Typed, ForwardTyped, Str, Enum, Event, observe, set_default
+    Typed, ForwardTyped, Unicode, Enum, Event, observe, set_default
 )
 
 from enaml.core.declarative import d_
@@ -36,7 +36,7 @@ class Label(Control):
 
     """
     #: The str text for the label.
-    text = d_(Str())
+    text = d_(Unicode())
 
     #: The horizontal alignment of the text in the widget area.
     align = d_(Enum('left', 'right', 'center', 'justify'))

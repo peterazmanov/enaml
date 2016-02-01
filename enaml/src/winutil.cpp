@@ -11,6 +11,7 @@
 #endif
 #include <windows.h>
 #include "pythonhelpersex.h"
+#include "py23compat.h"
 
 
 using namespace PythonHelpers;
@@ -47,7 +48,15 @@ WinEnum_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    0,                                      /* tp_reserved */
+#if PY_MAJOR_VERSION >= 3
+#if PY_MINOR_VERSION > 4
+	( PyAsyncMethods* )0,                  /* tp_as_async */
+#else
+	( void* ) 0,                           /* tp_reserved */
+#endif
+#else
+	( cmpfunc )0,                          /* tp_compare */
+#endif
     (reprfunc)0,                            /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)0,                  /* tp_as_sequence */
@@ -114,7 +123,7 @@ PyBytes_FromHICON( HICON icon, int& width_out, int& height_out )
     HGDIOBJ old_hdc = ( HBITMAP )SelectObject( hdc, win_bitmap );
     DrawIconEx( hdc, 0, 0, icon, w, h, 0, 0, DI_NORMAL );
 
-    PyObject* result = PyBytes_FromStringAndSize( ( const char* )bits, w * h * 4 );
+    PyObject* result = Py23Bytes_FromStringAndSize( ( const char* )bits, w * h * 4 );
 
     // dispose resources created by GetIconInfo
     DeleteObject( icon_info.hbmMask );
@@ -152,12 +161,6 @@ struct module_state {
     PyObject *error;
 };
 
-#if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-#else
-#define GETSTATE(m) (&_state)
-static struct module_state _state;
-#endif
 
 static PyMethodDef
 winutil_methods[] = {
@@ -165,6 +168,7 @@ winutil_methods[] = {
       "Load a builtin Windows icon" },
     { 0 } // Sentinel
 };
+
 
 #define MAKE_ENUM( TOKEN, VALUE ) \
     do { \
@@ -176,7 +180,10 @@ winutil_methods[] = {
             INITERROR; \
     } while( 0 )
 
+
 #if PY_MAJOR_VERSION >= 3
+
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 
 static int winutil_traverse(PyObject *m, visitproc visit, void *arg) {
     Py_VISIT(GETSTATE(m)->error);
@@ -201,17 +208,14 @@ static struct PyModuleDef moduledef = {
         NULL
 };
 
-#define INITERROR return NULL
-
-PyMODINIT_FUNC
-PyInit_winutil(void)
-
 #else
-#define INITERROR return
 
-PyMODINIT_FUNC
-initwinutil(void)
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+
 #endif
+
+MOD_INIT_FUNC(winutil)
 {
 #if PY_MAJOR_VERSION >= 3
     PyObject *mod = PyModule_Create(&moduledef);

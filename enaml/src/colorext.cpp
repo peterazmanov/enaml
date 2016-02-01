@@ -10,6 +10,15 @@
 #include <iostream>
 #include <sstream>
 #include "pythonhelpers.h"
+#include "py23compat.h"
+
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wdeprecated-writable-strings"
+#endif
+
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 
 using namespace PythonHelpers;
 
@@ -66,7 +75,7 @@ Color_repr( Color* self )
     uint32_t b = self->argb & 255;
     std::ostringstream ostr;
     ostr << "Color(red=" << r << ", green=" << g << ", blue=" << b << ", alpha=" << a << ")";
-    return PyUnicode_FromString(ostr.str().c_str());
+    return Py23Str_FromString(ostr.str().c_str());
 }
 
 
@@ -74,7 +83,7 @@ static PyObject*
 Color_get_alpha( Color* self, void* context )
 {
     uint32_t a = ( self->argb >> 24 ) & 255;
-    return PyLong_FromLong( a );
+    return Py23Int_FromLong( a );
 }
 
 
@@ -82,7 +91,7 @@ static PyObject*
 Color_get_red( Color* self, void* context )
 {
     uint32_t r = ( self->argb >> 16 ) & 255;
-    return PyLong_FromLong( r );
+    return Py23Int_FromLong( r );
 }
 
 
@@ -90,7 +99,7 @@ static PyObject*
 Color_get_green( Color* self, void* context )
 {
     uint32_t g = ( self->argb >> 8 ) & 255;
-    return PyLong_FromLong( g );
+    return Py23Int_FromLong( g );
 }
 
 
@@ -98,7 +107,7 @@ static PyObject*
 Color_get_blue( Color* self, void* context )
 {
     uint32_t b = self->argb & 255;
-    return PyLong_FromLong( b );
+    return Py23Int_FromLong( b );
 }
 
 
@@ -160,7 +169,15 @@ PyTypeObject Color_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    0,                                      /* tp_reserved */
+#if PY_MAJOR_VERSION >= 3
+#if PY_MINOR_VERSION > 4
+	( PyAsyncMethods* )0,                  /* tp_as_async */
+#else
+	( void* ) 0,                           /* tp_reserved */
+#endif
+#else
+	( cmpfunc )0,                          /* tp_compare */
+#endif
     (reprfunc)Color_repr,                   /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)0,                  /* tp_as_sequence */
@@ -204,20 +221,15 @@ struct module_state {
     PyObject *error;
 };
 
-#if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-#else
-#define GETSTATE(m) (&_state)
-static struct module_state _state;
-#endif
 
 static PyMethodDef
 colorext_methods[] = {
     { 0 } // Sentinel
 };
 
-
 #if PY_MAJOR_VERSION >= 3
+
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 
 static int colorext_traverse(PyObject *m, visitproc visit, void *arg) {
     Py_VISIT(GETSTATE(m)->error);
@@ -242,17 +254,14 @@ static struct PyModuleDef moduledef = {
         NULL
 };
 
-#define INITERROR return NULL
-
-PyMODINIT_FUNC
-PyInit_colorext(void)
-
 #else
-#define INITERROR return
 
-PyMODINIT_FUNC
-initcolorext(void)
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+
 #endif
+
+MOD_INIT_FUNC(colorext)
 {
 #if PY_MAJOR_VERSION >= 3
     PyObject *mod = PyModule_Create(&moduledef);

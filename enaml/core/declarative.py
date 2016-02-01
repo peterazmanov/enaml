@@ -5,6 +5,8 @@
 #
 # The full license is in the file COPYING.txt, distributed with this software.
 #------------------------------------------------------------------------------
+from future.utils import with_metaclass
+
 from atom.api import Event, Typed, Unicode
 from atom.datastructures.api import sortedmap
 
@@ -69,7 +71,7 @@ def d_func(func):
 INITIALIZED_FLAG = next(flag_generator)
 
 
-class Declarative(Object, metaclass=DeclarativeMeta):
+class Declarative(with_metaclass(DeclarativeMeta, Object)):
     """ The most base class of the Enaml declarative objects.
 
     This class provides the core functionality required of declarative

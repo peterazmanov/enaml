@@ -7,7 +7,15 @@
 |----------------------------------------------------------------------------*/
 #include <sstream>
 #include "pythonhelpersex.h"
+#include "py23compat.h"
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wdeprecated-writable-strings"
+#endif
+
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 
 using namespace PythonHelpers;
 
@@ -63,14 +71,14 @@ alias_load_fail( Alias* self )
     PyObjectPtr pystr( PyObject_Str( self->target ) );
     if( !pystr )
         return 0;
-    ostr << PyUnicode_1BYTE_DATA( pystr.get() );
+    ostr << Py23Str_AS_STRING( pystr.get() );
     Py_ssize_t size = PyTuple_GET_SIZE( self->chain );
     for( Py_ssize_t i = 0; i < size; ++i )
     {
         pystr = PyObject_Str( PyTuple_GET_ITEM( self->chain, i ) );
         if( !pystr )
             return 0;
-        ostr << "." << PyUnicode_1BYTE_DATA( pystr.get() );
+        ostr << "." << Py23Str_AS_STRING( pystr.get() );
     }
     PyErr_Format(
         PyExc_RuntimeError,
@@ -264,7 +272,15 @@ PyTypeObject Alias_Type = {
     (printfunc)0,                           /* tp_print */
     (getattrfunc)0,                         /* tp_getattr */
     (setattrfunc)0,                         /* tp_setattr */
-    0,                                      /* tp_reserved */
+#if PY_MAJOR_VERSION >= 3
+#if PY_MINOR_VERSION > 4
+	( PyAsyncMethods* )0,                  /* tp_as_async */
+#else
+	( void* ) 0,                           /* tp_reserved */
+#endif
+#else
+	( cmpfunc )0,                          /* tp_compare */
+#endif
     (reprfunc)0,                            /* tp_repr */
     (PyNumberMethods*)0,                    /* tp_as_number */
     (PySequenceMethods*)0,                  /* tp_as_sequence */
@@ -309,20 +325,14 @@ struct module_state {
     PyObject *error;
 };
 
-#if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-#else
-#define GETSTATE(m) (&_state)
-static struct module_state _state;
-#endif
-
 static PyMethodDef
 alias_methods[] = {
     { 0 } // sentinel
 };
 
-
 #if PY_MAJOR_VERSION >= 3
+
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 
 static int alias_traverse(PyObject *m, visitproc visit, void *arg) {
     Py_VISIT(GETSTATE(m)->error);
@@ -347,17 +357,14 @@ static struct PyModuleDef moduledef = {
         NULL
 };
 
-#define INITERROR return NULL
-
-PyMODINIT_FUNC
-PyInit_alias(void)
-
 #else
-#define INITERROR return
 
-PyMODINIT_FUNC
-initalias(void)
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+
 #endif
+
+MOD_INIT_FUNC(alias)
 {
 #if PY_MAJOR_VERSION >= 3
     PyObject *mod = PyModule_Create(&moduledef);
@@ -366,7 +373,7 @@ initalias(void)
 #endif
     if( !mod )
         INITERROR;
-    storage_str = PyUnicode_FromString( "_d_storage" );
+    storage_str = Py23Str_FromString( "_d_storage" );
     if( !storage_str )
         INITERROR;
     if( PyType_Ready( &Alias_Type ) < 0 )

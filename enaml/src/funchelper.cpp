@@ -6,6 +6,7 @@
 | The full license is in the file COPYING.txt, distributed with this software.
 |----------------------------------------------------------------------------*/
 #include <Python.h>
+#include "py23compat.h"
 
 
 extern "C" {
@@ -84,6 +85,7 @@ call_func( PyObject* mod, PyObject* args )
         /* XXX This is broken if the caller deletes dict items! */
     }
 
+#if PY_MAJOR_VERSION >= 3
     PyObject* result = PyEval_EvalCodeEx(
         PyFunction_GET_CODE( func ),
         PyFunction_GET_GLOBALS( func ),
@@ -93,6 +95,17 @@ call_func( PyObject* mod, PyObject* args )
         keywords, num_keywords, defaults, num_defaults,
         NULL, PyFunction_GET_CLOSURE( func )
     );
+#else
+    PyObject* result = PyEval_EvalCodeEx(
+        reinterpret_cast<PyCodeObject*>( PyFunction_GET_CODE( func ) ),
+        PyFunction_GET_GLOBALS( func ),
+        func_locals,
+        &PyTuple_GET_ITEM( func_args, 0 ),
+        PyTuple_Size( func_args ),
+        keywords, num_keywords, defaults, num_defaults,
+        PyFunction_GET_CLOSURE( func )
+        );
+#endif
 
     if( keywords )
         PyMem_DEL( keywords );
@@ -104,12 +117,6 @@ struct module_state {
     PyObject *error;
 };
 
-#if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-#else
-#define GETSTATE(m) (&_state)
-static struct module_state _state;
-#endif
 
 static PyMethodDef
 funchelper_methods[] = {
@@ -118,8 +125,9 @@ funchelper_methods[] = {
     { 0 } // sentinel
 };
 
-
 #if PY_MAJOR_VERSION >= 3
+
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 
 static int funchelper_traverse(PyObject *m, visitproc visit, void *arg) {
     Py_VISIT(GETSTATE(m)->error);
@@ -144,17 +152,14 @@ static struct PyModuleDef moduledef = {
         NULL
 };
 
-#define INITERROR return NULL
-
-PyMODINIT_FUNC
-PyInit_funchelper(void)
-
 #else
-#define INITERROR return
 
-PyMODINIT_FUNC
-initfunchelper(void)
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+
 #endif
+
+MOD_INIT_FUNC(funchelper)
 {
 #if PY_MAJOR_VERSION >= 3
     PyObject *mod = PyModule_Create(&moduledef);

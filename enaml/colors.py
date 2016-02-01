@@ -10,6 +10,7 @@
 """
 from colorsys import hls_to_rgb
 import re
+from past.builtins import basestring
 
 from atom.api import Coerced
 
@@ -346,7 +347,7 @@ def coerce_color(color):
     """ The coercing function for the ColorMember.
 
     """
-    if isinstance(color, str):
+    if isinstance(color, basestring):
         return parse_color(color)
 
 
