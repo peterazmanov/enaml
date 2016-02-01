@@ -168,7 +168,7 @@ class EnamlCompiler(cmn.CompilerBase):
 
         # On Python 2 protect against unicode filenames, which are incompatible
         # with code objects created via types.CodeType
-        if sys.version_info[0] == 3 and isinstance(filename, type(u'')):
+        if sys.version_info < (3,) and isinstance(filename, type(u'')):
             filename = filename.encode(sys.getfilesystemencoding())
 
         # Create the compiler and generate the code.
